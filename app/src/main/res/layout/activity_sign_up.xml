@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="group.project.transportai.SignUpActivity">
+
+    <EditText
+        android:id="@+id/etSignUpEnterName"
+        android:layout_width="192dp"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="156dp"
+        android:inputType="textPersonName"
+        android:hint="@string/enter_name" />
+
+    <EditText
+        android:id="@+id/etSignUpEnterEmail"
+        android:layout_width="192dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etSignUpEnterName"
+        android:layout_marginTop="16dp"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/enter_password"
+        android:inputType="textEmailAddress" />
+
+    <Button
+        android:id="@+id/buSignUp"
+        android:layout_width="192dp"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/etSignUpEnterEmail"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="24dp"
+        android:text="@string/sign_up" />
+</RelativeLayout>
