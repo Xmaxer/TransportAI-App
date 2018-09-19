@@ -17,13 +17,13 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        etEnterEmail = (EditText) findViewById(R.id.etSignInEnterEmail);
-        etEnterPassword = (EditText) findViewById(R.id.etSignInEnterPassword);
+        etEnterEmail = findViewById(R.id.etSignInEnterEmail);
+        etEnterPassword = findViewById(R.id.etSignInEnterPassword);
 
-        bSignIn = (Button) findViewById(R.id.bSignIn);
+        bSignIn = findViewById(R.id.bSignIn);
+        bSignIn.setOnClickListener(this);
 
-
-        bSignUp = (Button) findViewById(R.id.bSignUp);
+        bSignUp = findViewById(R.id.bSignUp);
         bSignUp.setOnClickListener(this);
     }
 
@@ -32,6 +32,8 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         switch(v.getId()) {
             case R.id.bSignIn:
                 // Add functionality for signing in
+                Intent testMapsActivity = new Intent(Main.this, MapsActivity.class);
+                startActivity(testMapsActivity);
                 break;
             case R.id.bSignUp:
                 Intent openSignUpActivity = new Intent(Main.this, SignUpActivity.class);

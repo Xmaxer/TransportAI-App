@@ -8,3 +8,14 @@
 /build
 /captures
 .externalNativeBuild
+
+
+app/src/debug/res/values/google_maps_api\.xml
+
+gradle\.properties
+
+app/src/release/res/values/google_maps_api\.xml
+
+\.idea/caches/
+
+\.idea/codeStyles/
