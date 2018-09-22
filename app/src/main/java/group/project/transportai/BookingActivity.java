@@ -1,8 +1,9 @@
 package group.project.transportai;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -13,6 +14,9 @@ import android.view.MenuItem;
 
 public class BookingActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    Fragment locationFragment, reviewFragment, travelPointsFragment;
+    FragmentManager fragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +33,14 @@ public class BookingActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        fragmentManager = getSupportFragmentManager();
+
+        locationFragment = new LocationFragment();
+        reviewFragment = new ReviewsFragment();
+        travelPointsFragment = new TravelPointsFragment();
+
+        fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
     }
 
     @Override
@@ -68,15 +80,24 @@ public class BookingActivity extends AppCompatActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
 
+        Fragment fragment = null;
+
         switch(item.getItemId()) {
+            case R.id.nav_bookRide:
+                fragment = locationFragment;
+                break;
             case R.id.nav_myReviews:
-                Intent openReviewsActivity  = new Intent(BookingActivity.this, ReviewsActivity.class);
-                startActivity(openReviewsActivity);
+                fragment = reviewFragment;
                 break;
             case R.id.nav_travelPoints:
-                Intent openTravelPointsActivity = new Intent(BookingActivity.this, TravelPointsActivity.class);
-                startActivity(openTravelPointsActivity);
+                fragment = travelPointsFragment;
                 break;
+        }
+
+        if(fragment != null) {
+            fragmentManager = getSupportFragmentManager();
+
+            fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, fragment).commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

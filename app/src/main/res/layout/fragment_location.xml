@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="group.project.transportai.MapsActivity">
+    tools:context="group.project.transportai.LocationFragment">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
@@ -16,7 +16,7 @@
             android:layout_width="match_parent"
             android:layout_height="366dp"
             android:exported="true"
-            tools:context=".MapsActivity" />
+            tools:context=".LocationFragment" />
 
         <TextView
             android:id="@+id/textView"

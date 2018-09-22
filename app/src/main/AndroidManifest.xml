@@ -37,18 +37,11 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".MapsActivity"
-            android:label="@string/title_activity_maps">
-            <intent-filter>
-                <action android:name="android.intent.action.SEARCH" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".BookingActivity"
             android:label="@string/title_activity_booking"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ReviewsActivity" android:parentActivityName=".BookingActivity" />
-        <activity android:name=".TravelPointsActivity" android:parentActivityName=".BookingActivity"></activity>
+        <activity android:name=".ReviewsFragment" android:parentActivityName=".BookingActivity" />
+        <activity android:name=".TravelPointsFragment" android:parentActivityName=".BookingActivity"></activity>
     </application>
 
 </manifest>
