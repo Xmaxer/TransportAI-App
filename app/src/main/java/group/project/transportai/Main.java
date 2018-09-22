@@ -32,7 +32,7 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         switch(v.getId()) {
             case R.id.bSignIn:
                 // Add functionality for signing in
-                Intent testMapsActivity = new Intent(Main.this, MapsActivity.class);
+                Intent testMapsActivity = new Intent(Main.this, BookingActivity.class);
                 startActivity(testMapsActivity);
                 break;
             case R.id.bSignUp:

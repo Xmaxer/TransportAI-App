@@ -43,6 +43,12 @@
                 <action android:name="android.intent.action.SEARCH" />
             </intent-filter>
         </activity>
+        <activity
+            android:name=".BookingActivity"
+            android:label="@string/title_activity_booking"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ReviewsActivity" android:parentActivityName=".BookingActivity" />
+        <activity android:name=".TravelPointsActivity" android:parentActivityName=".BookingActivity"></activity>
     </application>
 
 </manifest>
