@@ -1,17 +1,33 @@
 package group.project.transportai;
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.Place;
+import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class LocationFragment extends Fragment {
+public class LocationFragment extends Fragment implements OnMapReadyCallback{
 
-    SupportPlaceAutocompleteFragment fromSearch, toSearch;
+    private SupportPlaceAutocompleteFragment fromSearch, toSearch;
+    private GoogleMap mMap;
+    private final int MY_LOCATION_PERMISSION = 100;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -29,5 +45,49 @@ public class LocationFragment extends Fragment {
 
         toSearch = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.placeAutoCompleteTo);
         toSearch.setHint("Destination");
+
+        fromSearch.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                Log.d("LOCATION-FROM", place.getName().toString());
+            }
+
+            @Override
+            public void onError(Status status) {
+                Log.d("LOCATION-FROM-ERROR", "Couldn't get location");
+            }
+        });
+
+        toSearch.setOnPlaceSelectedListener(new PlaceSelectionListener() {
+            @Override
+            public void onPlaceSelected(Place place) {
+                Log.d("LOCATION-TO", place.getName().toString());
+            }
+
+            @Override
+            public void onError(Status status) {
+                Log.d("LOCATION-TO-ERROR", "Couldn't get location");
+            }
+        });
+        SupportMapFragment mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        mMapFragment.getMapAsync(this);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_LOCATION_PERMISSION);
+        } else {
+            mMap.setMyLocationEnabled(true);
+        }
+
+        LatLng startingLocation = new LatLng(51.8853195, -8.5360152);
+        mMap.addMarker(new MarkerOptions().position(startingLocation).title("Marker in Sydney"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(startingLocation));
+
+        mMap.setMinZoomPreference(17.0f);
     }
 }
