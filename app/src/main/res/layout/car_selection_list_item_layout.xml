@@ -8,12 +8,15 @@
         android:layout_width="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_height="wrap_content"
-        android:textSize="16sp" />
+        android:layout_centerVertical="true"
+        android:padding="12dp"
+        android:textSize="20sp" />
 
     <RadioButton
         android:id="@+id/rbCarSelectButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"/>
 
 </RelativeLayout>
