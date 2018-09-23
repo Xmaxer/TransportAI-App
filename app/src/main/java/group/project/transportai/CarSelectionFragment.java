@@ -31,6 +31,8 @@ public class CarSelectionFragment extends Fragment {
 
         LinearLayoutManager linearLayout = new LinearLayoutManager(getContext());
 
+        rvCarSelectList.setLayoutManager(linearLayout);
+
         DividerItemDecoration divider = new DividerItemDecoration(rvCarSelectList.getContext(), linearLayout.getOrientation());
 
         rvCarSelectList.addItemDecoration(divider);

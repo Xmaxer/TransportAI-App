@@ -4,6 +4,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RadioButton;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import objects.Car;
 public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionListAdapter.ViewHolder> {
 
     private ArrayList<Car> carList = new ArrayList<>();
+    public int selectedItem = -1;
 
     public CarSelectionListAdapter() {
         carList.add(new Car("Toyota Corolla"));
@@ -33,7 +35,8 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
     public void onBindViewHolder(CarSelectionListAdapter.ViewHolder holder, int position) {
         Car car = carList.get(position);
 
-        holder.tvCarModel.setText(car.getCarModel());
+        holder.carModel.setText(car.getCarModel());
+        holder.selected.setChecked(position == selectedItem);
     }
 
     @Override
@@ -41,14 +44,26 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
         return carList.size();
     }
 
-    static class ViewHolder extends RecyclerView.ViewHolder {
+    class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView tvCarModel;
+        TextView carModel;
+        RadioButton selected;
 
         ViewHolder(View itemView) {
             super(itemView);
 
-            tvCarModel = itemView.findViewById(R.id.tvCarModel);
+            View.OnClickListener l = new View.OnClickListener(){
+                @Override
+                public void onClick(View v) {
+                    selectedItem = getAdapterPosition();
+                    notifyItemRangeChanged(0, carList.size());
+                }
+            };
+            selected = itemView.findViewById(R.id.rbCarSelectButton);
+            carModel = itemView.findViewById(R.id.tvCarModel);
+
+            selected.setOnClickListener(l);
+            carModel.setOnClickListener(l);
         }
     }
 }
