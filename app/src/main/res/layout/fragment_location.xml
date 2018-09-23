@@ -42,11 +42,11 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.024"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/place_autocomplete" />
+            app:layout_constraintTop_toBottomOf="@+id/placeAutoCompleteFrom" />
 
         <fragment
-            android:id="@+id/place_autocomplete"
-            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:id="@+id/placeAutoCompleteFrom"
+            android:name="com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment"
             android:layout_width="351dp"
             android:layout_height="34dp"
             android:layout_marginEnd="8dp"
@@ -57,8 +57,8 @@
             app:layout_constraintTop_toBottomOf="@+id/textView" />
 
         <fragment
-            android:id="@+id/place_autocomplete2"
-            android:name="com.google.android.gms.location.places.ui.PlaceAutocompleteFragment"
+            android:id="@+id/placeAutoCompleteTo"
+            android:name="com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment"
             android:layout_width="351dp"
             android:layout_height="34dp"
             android:layout_alignParentBottom="true"
