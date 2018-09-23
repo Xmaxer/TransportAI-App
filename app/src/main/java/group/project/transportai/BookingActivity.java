@@ -17,25 +17,30 @@ import android.widget.Button;
 public class BookingActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
-    Fragment locationFragment, reviewFragment, travelPointsFragment;
+    Fragment locationFragment, reviewFragment, travelPointsFragment, carSelectionFragment;
     FragmentManager fragmentManager;
 
     Button bPrevious, bNext;
+
+    private static final int MAP_STAGE = 1;
+    private static final int CAR_SELECT_STAGE = 2;
+
+    private int bookingStage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
         fragmentManager = getSupportFragmentManager();
@@ -43,6 +48,7 @@ public class BookingActivity extends AppCompatActivity
         locationFragment = new LocationFragment();
         reviewFragment = new ReviewsFragment();
         travelPointsFragment = new TravelPointsFragment();
+        carSelectionFragment = new CarSelectionFragment();
 
         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
 
@@ -53,11 +59,13 @@ public class BookingActivity extends AppCompatActivity
 
         bNext = findViewById(R.id.bNext);
         bNext.setOnClickListener(this);
+
+        bookingStage = MAP_STAGE;
     }
 
     @Override
     public void onBackPressed() {
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
@@ -103,6 +111,8 @@ public class BookingActivity extends AppCompatActivity
 
                 bNext.setVisibility(View.VISIBLE);
                 bNext.setClickable(true);
+
+                bookingStage = MAP_STAGE;
                 break;
             case R.id.nav_myReviews:
                 fragment = reviewFragment;
@@ -125,12 +135,10 @@ public class BookingActivity extends AppCompatActivity
         }
 
         if(fragment != null) {
-            fragmentManager = getSupportFragmentManager();
-
             fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, fragment).commit();
         }
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -140,9 +148,27 @@ public class BookingActivity extends AppCompatActivity
         switch(v.getId()) {
             case R.id.bPrevious:
                 // TODO Move to previous fragment in booking process, make invisible and unclickable if going back to LocationFragment
+
+                if(bookingStage == CAR_SELECT_STAGE) {
+                    bookingStage = MAP_STAGE;
+
+                    fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
+
+                    bPrevious.setVisibility(View.INVISIBLE);
+                    bPrevious.setClickable(false);
+                }
+
                 break;
             case R.id.bNext:
                 // TODO Move forward to next fragment, make bPrevious visible and clickable to go back
+                if(bookingStage == MAP_STAGE) {
+                    bookingStage = CAR_SELECT_STAGE;
+
+                    fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, carSelectionFragment).commit();
+
+                    bPrevious.setVisibility(View.VISIBLE);
+                    bPrevious.setClickable(true);
+                }
                 break;
         }
     }

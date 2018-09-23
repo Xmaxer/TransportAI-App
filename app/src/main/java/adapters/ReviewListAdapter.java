@@ -14,7 +14,7 @@ import objects.Review;
 
 public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.ViewHolder> {
 
-    ArrayList<Review> reviews = new ArrayList<>();
+    private ArrayList<Review> reviews = new ArrayList<>();
 
     public ReviewListAdapter() {
         // Test Reviews
@@ -53,10 +53,10 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
         ViewHolder(View itemView) {
             super(itemView);
 
-            rating = (RatingBar) itemView.findViewById(R.id.reviewItemRatingBar);
+            rating = itemView.findViewById(R.id.reviewItemRatingBar);
             rating.setNumStars(5);
 
-            reviewText = (TextView) itemView.findViewById(R.id.tvReviewTextView);
+            reviewText = itemView.findViewById(R.id.tvReviewTextView);
         }
 
     }
