@@ -24,10 +24,10 @@ public class LocationFragment extends Fragment {
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        fromSearch = (SupportPlaceAutocompleteFragment) getActivity()
-                .getSupportFragmentManager().findFragmentById(R.id.placeAutoCompleteFrom);
+        fromSearch = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.placeAutoCompleteFrom);
+        fromSearch.setHint("Pickup From");
 
-        toSearch = (SupportPlaceAutocompleteFragment) getActivity()
-                .getSupportFragmentManager().findFragmentById(R.id.placeAutoCompleteTo);
+        toSearch = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.placeAutoCompleteTo);
+        toSearch.setHint("Destination");
     }
 }

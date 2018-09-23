@@ -11,6 +11,23 @@
     <FrameLayout
         android:id="@+id/flBookingScreenArea"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
+
+    <LinearLayout></LinearLayout>
+    <Button
+        android:id="@+id/bPrevious"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:text="@string/back" />
+
+    <Button
+        android:id="@+id/bNext"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@id/bPrevious"
+        android:text="@string/next" />
 
 </RelativeLayout>
