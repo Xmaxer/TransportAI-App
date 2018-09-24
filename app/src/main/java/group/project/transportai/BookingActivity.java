@@ -17,13 +17,14 @@ import android.widget.Button;
 public class BookingActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
 
-    Fragment locationFragment, reviewFragment, travelPointsFragment, carSelectionFragment;
+    Fragment locationFragment, reviewFragment, travelPointsFragment, carSelectionFragment, paymentFragment;
     FragmentManager fragmentManager;
 
     Button bPrevious, bNext;
 
     private static final int MAP_STAGE = 1;
     private static final int CAR_SELECT_STAGE = 2;
+    private static final int PAYMENT_STAGE = 3;
 
     private int bookingStage;
 
@@ -49,6 +50,7 @@ public class BookingActivity extends AppCompatActivity
         reviewFragment = new ReviewsFragment();
         travelPointsFragment = new TravelPointsFragment();
         carSelectionFragment = new CarSelectionFragment();
+        paymentFragment = new PaymentFragment();
 
         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
 
@@ -156,6 +158,10 @@ public class BookingActivity extends AppCompatActivity
 
                     bPrevious.setVisibility(View.INVISIBLE);
                     bPrevious.setClickable(false);
+                } else if(bookingStage == PAYMENT_STAGE) {
+                    bookingStage = CAR_SELECT_STAGE;
+
+                    fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, carSelectionFragment).commit();
                 }
 
                 break;
@@ -168,6 +174,10 @@ public class BookingActivity extends AppCompatActivity
 
                     bPrevious.setVisibility(View.VISIBLE);
                     bPrevious.setClickable(true);
+                } else if(bookingStage == CAR_SELECT_STAGE) {
+                    bookingStage = PAYMENT_STAGE;
+
+                    fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, paymentFragment).commit();
                 }
                 break;
         }

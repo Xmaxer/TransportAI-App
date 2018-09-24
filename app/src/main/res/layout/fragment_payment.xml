@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/etEnterName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/full_name"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/etCardNumber"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/etEnterName"
+        android:layout_centerHorizontal="true"
+        android:hint="@string/card_number"
+        android:inputType="number" />
+
+    <EditText
+        android:id="@+id/etExpiryDate"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_below="@id/etCardNumber"
+        android:hint="@string/date_entry"
+        android:inputType="date" />
+
+    <EditText
+        android:id="@+id/etCVVNumber"
+        android:layout_toEndOf="@id/etExpiryDate"
+        android:layout_below="@id/etCardNumber"
+        android:inputType="number"
+        android:hint="@string/cvv"
+        android:layout_width="64dp"
+        android:layout_height="wrap_content" />
+
+
+</RelativeLayout>
