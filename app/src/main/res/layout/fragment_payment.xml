@@ -3,11 +3,20 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <TextView
+        android:id="@+id/tvPaymentAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:text="Please Pay €14.69"
+        android:textSize="18sp" />
+
     <EditText
         android:id="@+id/etEnterName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentTop="true"
+        android:layout_below="@id/tvPaymentAmount"
         android:layout_centerHorizontal="true"
         android:hint="@string/full_name"
         android:inputType="textPersonName" />
@@ -23,7 +32,7 @@
 
     <EditText
         android:id="@+id/etExpiryDate"
-        android:layout_width="64dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_alignParentStart="true"
         android:layout_below="@id/etCardNumber"
@@ -32,12 +41,12 @@
 
     <EditText
         android:id="@+id/etCVVNumber"
-        android:layout_toEndOf="@id/etExpiryDate"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
         android:layout_below="@id/etCardNumber"
-        android:inputType="number"
+        android:layout_toEndOf="@id/etExpiryDate"
         android:hint="@string/cvv"
-        android:layout_width="64dp"
-        android:layout_height="wrap_content" />
+        android:inputType="number" />
 
 
 </RelativeLayout>
