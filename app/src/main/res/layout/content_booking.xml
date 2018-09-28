@@ -29,14 +29,16 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/back" />
+            android:text="@string/back"
+            style="?android:buttonBarButtonStyle"/>
 
         <Button
             android:id="@+id/bNext"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/next" />
+            android:text="@string/next"
+            style="?android:buttonBarButtonStyle"/>
 
     </LinearLayout>
 
