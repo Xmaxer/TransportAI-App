@@ -7,10 +7,20 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import java.util.Arrays;
+import java.util.List;
+
 public class Main extends AppCompatActivity implements View.OnClickListener {
 
     private EditText etEnterEmail, etEnterPassword;
     private Button bSignIn, bSignUp;
+
+    private static final int SIGN_IN_REQUEST_CODE = 1100;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,13 +42,32 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         switch(v.getId()) {
             case R.id.bSignIn:
                 // Add functionality for signing in
-                Intent testMapsActivity = new Intent(Main.this, BookingActivity.class);
-                startActivity(testMapsActivity);
+
+                List<AuthUI.IdpConfig> signInProviders = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build());
+
+                startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
+                        .setAvailableProviders(signInProviders).build(), SIGN_IN_REQUEST_CODE);
+
                 break;
             case R.id.bSignUp:
                 Intent openSignUpActivity = new Intent(Main.this, SignUpActivity.class);
                 startActivity(openSignUpActivity);
                 break;
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == SIGN_IN_REQUEST_CODE) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            if(resultCode == RESULT_OK) {
+                FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                System.out.println(user.getEmail());
+                startActivity(new Intent(Main.this, BookingActivity.class));
+            }
         }
     }
 }
