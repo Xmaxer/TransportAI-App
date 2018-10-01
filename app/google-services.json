@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "628327064206-ikv2qcqnabn8cgdtjoof9mv7eh43tmov.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "group.project.transportai",
+            "certificate_hash": "498d9232187b90f19a51ce113764656e67d42c5d"
+          }
+        },
+        {
           "client_id": "628327064206-age6a61cfrfrkl1ej2k8huqtmu3t158g.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -29,8 +37,13 @@
           "status": 1
         },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628327064206-age6a61cfrfrkl1ej2k8huqtmu3t158g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         },
         "ads_service": {
           "status": 2
