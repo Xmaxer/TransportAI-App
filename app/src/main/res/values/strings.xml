@@ -27,4 +27,6 @@
     <string name="date_entry">MM/YY</string>
     <string name="cvv">CVV</string>
     <string name="enter_review">Enter Review</string>
+	<string name="twitter_api_key">ihKEVzAKZi7yaujUrRWFKINmH</string>
+	<string name="twitter_api_secret">sZlGte7uOlQkNYNgi8vlvPRQrW3NX53V5XTiA8yp0ttQbAoxqN</string>
 </resources>
