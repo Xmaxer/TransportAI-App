@@ -11,4 +11,9 @@ public class Car {
     public String getCarModel() {
         return carModel;
     }
+
+    @Override
+    public String toString(){
+        return carModel;
+    }
 }

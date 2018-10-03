@@ -2,19 +2,19 @@ package objects;
 
 public class Review {
 
-    private int rating;
+    private float rating;
     private String reviewText;
 
-    public Review(int rating, String reviewText) {
+    public Review(float rating, String reviewText) {
         this.rating = rating;
         this.reviewText = reviewText;
     }
 
-    public int getRating() {
+    public float getRating() {
         return rating;
     }
 
-    public void setRating(int rating) {
+    public void setRating(float rating) {
         this.rating = rating;
     }
 

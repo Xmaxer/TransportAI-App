@@ -36,12 +36,18 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
             case R.id.bSignIn:
                 // Add functionality for signing in
 
+                //TODO Uncomment the below section and comment out this line ONLY WHEN TESTING LOGINS OR FOR FINAL BUILD
+                //I just can't bother logging in everytime
+                startActivity(new Intent(Main.this, BookingActivity.class));
+
+/*
                 List<AuthUI.IdpConfig> signInProviders = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
                         new AuthUI.IdpConfig.GoogleBuilder().build(),
                         new AuthUI.IdpConfig.TwitterBuilder().build());
 
                 startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
                         .setAvailableProviders(signInProviders).build(), SIGN_IN_REQUEST_CODE);
+*/
 
                 break;
         }

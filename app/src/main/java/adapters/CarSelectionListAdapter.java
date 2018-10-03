@@ -2,6 +2,7 @@ package adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,8 +34,9 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
 
                 if(task.isSuccessful()) {
                     for(QueryDocumentSnapshot document : task.getResult()) {
-                        Car car = new Car((String) document.get("model"));
+                        Car car = new Car(document.get("model").toString());
                         carList.add(car);
+                        notifyDataSetChanged();
                     }
                 }
 
@@ -54,7 +56,6 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
     @Override
     public void onBindViewHolder(@NonNull CarSelectionListAdapter.ViewHolder holder, int position) {
         Car car = carList.get(position);
-
         holder.carModel.setText(car.getCarModel());
         holder.selected.setChecked(position == selectedItem);
     }

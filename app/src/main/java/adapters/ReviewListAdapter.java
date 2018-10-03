@@ -1,11 +1,18 @@
 package adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -18,10 +25,19 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
 
     public ReviewListAdapter() {
         // Test Reviews
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        reviews.add(new Review(4, "Excellent service"));
-        reviews.add(new Review(1, "Very poor car ride, took me to the wrong place"));
-        reviews.add(new Review(3, "Could have been better but not bad"));
+        db.collection("reviews").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        reviews.add(new Review(Float.parseFloat(document.get("rating").toString()), document.get("comment").toString()));
+                        notifyDataSetChanged();
+                    }
+                }
+            }
+        });
     }
 
     @Override
