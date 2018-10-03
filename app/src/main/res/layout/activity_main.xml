@@ -6,41 +6,12 @@
     android:layout_height="match_parent"
     tools:context="group.project.transportai.Main">
 
-    <EditText
-        android:id="@+id/etSignInEnterEmail"
-        android:layout_width="192dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="156dp"
-        android:hint="@string/enter_email"
-        android:layout_centerHorizontal="true"
-        android:inputType="textEmailAddress" />
-
-    <EditText
-        android:id="@+id/etSignInEnterPassword"
-        android:layout_width="192dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/etSignInEnterEmail"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:hint="@string/enter_password"
-        android:inputType="textPassword" />
-
     <Button
         android:id="@+id/bSignIn"
         android:layout_width="192dp"
         android:layout_height="wrap_content"
-        android:layout_below="@id/etSignInEnterPassword"
-        android:layout_centerHorizontal="true"
+        android:layout_centerInParent="true"
         android:layout_marginTop="56dp"
         android:text="@string/sign_in" />
-
-    <Button
-        android:id="@+id/bSignUp"
-        android:layout_width="192dp"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/bSignIn"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="32dp"
-        android:text="@string/sign_up" />
 
 </RelativeLayout>

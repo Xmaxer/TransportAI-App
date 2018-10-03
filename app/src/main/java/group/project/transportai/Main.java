@@ -26,14 +26,8 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        etEnterEmail = findViewById(R.id.etSignInEnterEmail);
-        etEnterPassword = findViewById(R.id.etSignInEnterPassword);
-
         bSignIn = findViewById(R.id.bSignIn);
         bSignIn.setOnClickListener(this);
-
-        bSignUp = findViewById(R.id.bSignUp);
-        bSignUp.setOnClickListener(this);
     }
 
     @Override
@@ -49,10 +43,6 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
                 startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
                         .setAvailableProviders(signInProviders).build(), SIGN_IN_REQUEST_CODE);
 
-                break;
-            case R.id.bSignUp:
-                Intent openSignUpActivity = new Intent(Main.this, SignUpActivity.class);
-                startActivity(openSignUpActivity);
                 break;
         }
     }
