@@ -1,5 +1,6 @@
 package group.project.transportai;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
@@ -28,6 +29,7 @@ public class BookingActivity extends AppCompatActivity
     private static final int PAYMENT_STAGE = 3;
 
     private int bookingStage;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

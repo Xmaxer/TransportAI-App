@@ -2,6 +2,7 @@ package group.project.transportai;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Intent;
 import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -26,12 +27,13 @@ public class ReviewDialogFragment extends DialogFragment {
 
     private AlertDialog.Builder dialog;
     private Context context;
+
     @Override
-    public void onAttach(Context context)
-    {
+    public void onAttach(Context context) {
         super.onAttach(context);
         this.context = context;
     }
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -60,10 +62,12 @@ public class ReviewDialogFragment extends DialogFragment {
                 db.collection("reviews").add(reviews).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
                     @Override
                     public void onSuccess(DocumentReference documentReference) {
-                        Toast.makeText(context, "Thank you for your review!", Toast.LENGTH_SHORT);
-                        //TODO Go back to the main screen (flBookingScreenArea)
+
                     }
                 });
+                dialog.dismiss();
+                Toast.makeText(context,"Thank you for your input!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(context, BookingActivity.class));
 
             }
         });
@@ -72,6 +76,7 @@ public class ReviewDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
+                startActivity(new Intent(context, BookingActivity.class));
             }
         });
 
