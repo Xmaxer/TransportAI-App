@@ -1,11 +1,18 @@
 package adapters;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 
@@ -18,13 +25,26 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
     private int selectedItem = -1;
 
     public CarSelectionListAdapter() {
-        carList.add(new Car("Toyota Corolla"));
-        carList.add(new Car("Renault Clio"));
-        carList.add(new Car("Ferrari"));
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("cars").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+
+                if(task.isSuccessful()) {
+                    for(QueryDocumentSnapshot document : task.getResult()) {
+                        Car car = new Car((String) document.get("model"));
+                        carList.add(car);
+                    }
+                }
+
+            }
+        });
     }
 
+    @NonNull
     @Override
-    public CarSelectionListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public CarSelectionListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.car_selection_list_item_layout, parent, false);
 
@@ -32,7 +52,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
     }
 
     @Override
-    public void onBindViewHolder(CarSelectionListAdapter.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull CarSelectionListAdapter.ViewHolder holder, int position) {
         Car car = carList.get(position);
 
         holder.carModel.setText(car.getCarModel());
