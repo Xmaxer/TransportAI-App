@@ -5,7 +5,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.EditText;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,8 +15,7 @@ import java.util.List;
 
 public class Main extends AppCompatActivity implements View.OnClickListener {
 
-    EditText etEnterEmail, etEnterPassword;
-    Button bSignIn, bSignUp;
+    Button bSignIn;
 
     private static final int SIGN_IN_REQUEST_CODE = 1100;
 
@@ -40,14 +38,12 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
                 //I just can't bother logging in everytime
                 startActivity(new Intent(Main.this, BookingActivity.class));
 
-/*
                 List<AuthUI.IdpConfig> signInProviders = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
                         new AuthUI.IdpConfig.GoogleBuilder().build(),
                         new AuthUI.IdpConfig.TwitterBuilder().build());
 
                 startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
                         .setAvailableProviders(signInProviders).build(), SIGN_IN_REQUEST_CODE);
-*/
 
                 break;
         }
