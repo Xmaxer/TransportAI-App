@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.location.places.ui.SupportPlaceAutocompleteFragment;
@@ -20,6 +21,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class LocationFragment extends Fragment implements OnMapReadyCallback{
@@ -40,9 +42,11 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
         super.onViewCreated(view, savedInstanceState);
 
         fromSearch = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.placeAutoCompleteFrom);
+        fromSearch.setFilter(new AutocompleteFilter.Builder().setCountry("IE").build());
         fromSearch.setHint("Pickup From");
 
         toSearch = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.placeAutoCompleteTo);
+        toSearch.setFilter(new AutocompleteFilter.Builder().setCountry("IE").build());
         toSearch.setHint("Destination");
 
         fromSearch.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -86,6 +90,7 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
             map.setMyLocationEnabled(true);
         }
 
-        map.setMinZoomPreference(10.0f);
+        map.setMinZoomPreference(8.0f);
+        map.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(51.903614, -8.468399)));
     }
 }
