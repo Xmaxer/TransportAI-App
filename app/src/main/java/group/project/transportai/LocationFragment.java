@@ -20,7 +20,6 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class LocationFragment extends Fragment implements OnMapReadyCallback{
@@ -86,10 +85,6 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
         } else {
             map.setMyLocationEnabled(true);
         }
-
-        LatLng startingLocation = new LatLng(51.8853195, -8.5360152);
-        map.addMarker(new MarkerOptions().position(startingLocation).title("Marker in Sydney"));
-        map.moveCamera(CameraUpdateFactory.newLatLng(startingLocation));
 
         map.setMinZoomPreference(10.0f);
     }
