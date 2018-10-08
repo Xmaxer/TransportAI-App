@@ -26,7 +26,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class LocationFragment extends Fragment implements OnMapReadyCallback{
 
     private SupportPlaceAutocompleteFragment fromSearch, toSearch;
-    private GoogleMap mMap;
+    private GoogleMap map;
     private final int MY_LOCATION_PERMISSION = 100;
 
     @Override
@@ -49,7 +49,8 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
         fromSearch.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                Log.d("LOCATION-FROM", place.getName().toString());
+                map.addMarker(new MarkerOptions().position(place.getLatLng()).title("Origin"));
+                map.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
             }
 
             @Override
@@ -61,7 +62,8 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
         toSearch.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                Log.d("LOCATION-TO", place.getName().toString());
+                map.addMarker(new MarkerOptions().position(place.getLatLng()).title("Destination"));
+                map.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
             }
 
             @Override
@@ -69,25 +71,26 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
                 Log.d("LOCATION-TO-ERROR", "Couldn't get location");
             }
         });
+
         SupportMapFragment mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
     }
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
+        map = googleMap;
 
         if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_LOCATION_PERMISSION);
         } else {
-            mMap.setMyLocationEnabled(true);
+            map.setMyLocationEnabled(true);
         }
 
         LatLng startingLocation = new LatLng(51.8853195, -8.5360152);
-        mMap.addMarker(new MarkerOptions().position(startingLocation).title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(startingLocation));
+        map.addMarker(new MarkerOptions().position(startingLocation).title("Marker in Sydney"));
+        map.moveCamera(CameraUpdateFactory.newLatLng(startingLocation));
 
-        mMap.setMinZoomPreference(17.0f);
+        map.setMinZoomPreference(10.0f);
     }
 }
