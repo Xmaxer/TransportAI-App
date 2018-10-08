@@ -2,6 +2,7 @@ package group.project.transportai;
 
 import android.Manifest;
 import android.content.pm.PackageManager;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -30,6 +31,9 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
     private GoogleMap map;
     private final int MY_LOCATION_PERMISSION = 100;
 
+    private Place origin, dest;
+    private float[] distanceResults = new float[1];
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -54,6 +58,7 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
             public void onPlaceSelected(Place place) {
                 map.addMarker(new MarkerOptions().position(place.getLatLng()).title("Origin"));
                 map.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
+                origin = place;
             }
 
             @Override
@@ -67,6 +72,12 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
             public void onPlaceSelected(Place place) {
                 map.addMarker(new MarkerOptions().position(place.getLatLng()).title("Destination"));
                 map.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
+                dest = place;
+
+                Location.distanceBetween(origin.getLatLng().latitude,
+                        origin.getLatLng().longitude, dest.getLatLng().latitude, dest.getLatLng().longitude, distanceResults);
+
+                Log.d("Distance between loc", String.valueOf(distanceResults[0]));
             }
 
             @Override
