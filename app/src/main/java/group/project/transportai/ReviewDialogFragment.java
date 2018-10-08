@@ -3,7 +3,6 @@ package group.project.transportai;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.support.v4.app.FragmentManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -13,10 +12,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.RatingBar;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -55,7 +55,9 @@ public class ReviewDialogFragment extends DialogFragment {
             public void onClick(DialogInterface dialog, int which) {
                 editText.getText();
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
+                FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 Map<String, Object> reviews = new HashMap<>();
+                reviews.put("email", currentUser.getEmail());
                 reviews.put("rating", ratingBar.getRating());
                 reviews.put("comment", editText.getText().toString());
                 Log.d("ONCLICK", reviews.toString());
