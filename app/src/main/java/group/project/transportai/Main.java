@@ -15,8 +15,6 @@ import java.util.List;
 
 public class Main extends AppCompatActivity implements View.OnClickListener {
 
-    Button bSignIn;
-
     private static final int SIGN_IN_REQUEST_CODE = 1100;
 
     @Override
@@ -24,7 +22,14 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        bSignIn = findViewById(R.id.bSignIn);
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        if(user != null) {
+            startActivity(new Intent(Main.this, BookingActivity.class));
+            finish();
+        }
+
+        Button bSignIn = findViewById(R.id.bSignIn);
         bSignIn.setOnClickListener(this);
     }
 
