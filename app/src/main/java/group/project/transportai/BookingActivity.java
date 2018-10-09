@@ -2,6 +2,7 @@ package group.project.transportai;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
@@ -109,9 +110,8 @@ public class BookingActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
     @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
+    public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         // Handle navigation view item clicks here.
 
         Fragment fragment = null;
@@ -209,7 +209,6 @@ public class BookingActivity extends AppCompatActivity
 
         if(requestCode == PAYPAL_REQUEST_CODE && resultCode == RESULT_OK) {
             DropInResult dropInResult = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
-
         }
     }
 }
