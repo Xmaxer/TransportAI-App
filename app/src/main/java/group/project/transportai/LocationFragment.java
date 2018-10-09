@@ -27,6 +27,7 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import org.json.JSONObject;
@@ -51,6 +52,8 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
 
     private Marker origin, dest;
     private Place pickupPoint, endPoint;
+
+    private Polyline routeLine;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -84,6 +87,11 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
                 pickupPoint = place;
 
                 if(endPoint != null) {
+
+                    if(routeLine != null) {
+                        routeLine.remove();
+                    }
+
                     drawRoute(pickupPoint.getLatLng(), endPoint.getLatLng());
                 }
             }
@@ -108,6 +116,11 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
                 endPoint = place;
 
                 if(pickupPoint != null) {
+
+                    if(routeLine != null) {
+                        routeLine.remove();
+                    }
+
                     drawRoute(pickupPoint.getLatLng(), endPoint.getLatLng());
                 }
             }
@@ -278,7 +291,7 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
             }
 
             // Drawing polyline in the Google Map for the i-th route
-            map.addPolyline(lineOptions);
+            routeLine = map.addPolyline(lineOptions);
         }
     }
 }
