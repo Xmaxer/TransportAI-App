@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -23,6 +24,7 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 public class LocationFragment extends Fragment implements OnMapReadyCallback{
@@ -31,18 +33,19 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
     private GoogleMap map;
     private final int MY_LOCATION_PERMISSION = 100;
 
-    private Place origin, dest;
+    private Marker origin, dest;
+    private Place pickupPoint, endPoint;
     private float[] distanceResults = new float[1];
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         return inflater.inflate(R.layout.fragment_location, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         fromSearch = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.placeAutoCompleteFrom);
@@ -56,9 +59,13 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
         fromSearch.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                map.addMarker(new MarkerOptions().position(place.getLatLng()).title("Origin"));
+                if(origin != null) {
+                    origin.remove();
+                }
+
+                origin = map.addMarker(new MarkerOptions().position(place.getLatLng()).title("Origin"));
                 map.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
-                origin = place;
+                pickupPoint = place;
             }
 
             @Override
@@ -70,12 +77,18 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
         toSearch.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
-                map.addMarker(new MarkerOptions().position(place.getLatLng()).title("Destination"));
-                map.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
-                dest = place;
 
-                Location.distanceBetween(origin.getLatLng().latitude,
-                        origin.getLatLng().longitude, dest.getLatLng().latitude, dest.getLatLng().longitude, distanceResults);
+                if(dest != null) {
+                    dest.remove();
+                }
+
+                dest = map.addMarker(new MarkerOptions().position(place.getLatLng()).title("Destination"));
+                map.moveCamera(CameraUpdateFactory.newLatLng(place.getLatLng()));
+                endPoint = place;
+
+                Location.distanceBetween(pickupPoint.getLatLng().latitude,
+                        pickupPoint.getLatLng().longitude, endPoint.getLatLng().latitude,
+                        endPoint.getLatLng().longitude, distanceResults);
 
                 Log.d("Distance between loc", String.valueOf(distanceResults[0]));
             }
@@ -94,11 +107,13 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback{
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
 
-        if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        if(getActivity() != null) {
+            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_LOCATION_PERMISSION);
-        } else {
-            map.setMyLocationEnabled(true);
+            } else {
+                map.setMyLocationEnabled(true);
+            }
         }
 
         map.setMinZoomPreference(8.0f);
