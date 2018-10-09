@@ -18,6 +18,7 @@ import android.widget.Button;
 
 import com.braintreepayments.api.dropin.DropInRequest;
 import com.braintreepayments.api.dropin.DropInResult;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class BookingActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -97,6 +98,11 @@ public class BookingActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
+            return true;
+        } else if(id == R.id.sign_out) {
+            FirebaseAuth.getInstance().signOut();
+            startActivity(new Intent(BookingActivity.this, Main.class));
+            finish();
             return true;
         }
 

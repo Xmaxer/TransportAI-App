@@ -29,4 +29,5 @@
     <string name="enter_review">Enter Review</string>
 	<string name="twitter_consumer_key">ihKEVzAKZi7yaujUrRWFKINmH</string>
 	<string name="twitter_consumer_secret">sZlGte7uOlQkNYNgi8vlvPRQrW3NX53V5XTiA8yp0ttQbAoxqN</string>
+    <string name="sign_out">Sign Out</string>
 </resources>
