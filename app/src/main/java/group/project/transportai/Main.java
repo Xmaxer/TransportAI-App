@@ -41,7 +41,6 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
 
                 //TODO Uncomment the below section and comment out this line ONLY WHEN TESTING LOGINS OR FOR FINAL BUILD
                 //I just can't bother logging in everytime
-                startActivity(new Intent(Main.this, BookingActivity.class));
 
                 List<AuthUI.IdpConfig> signInProviders = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
                         new AuthUI.IdpConfig.GoogleBuilder().build(),
@@ -65,6 +64,7 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
 
                 if(user != null) {
                     startActivity(new Intent(Main.this, BookingActivity.class));
+                    finish();
                 }
             }
         }
