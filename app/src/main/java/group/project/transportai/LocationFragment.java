@@ -48,14 +48,13 @@ import objects.DirectionsJSONParser;
 
 public class LocationFragment extends Fragment implements OnMapReadyCallback {
 
-    private SupportPlaceAutocompleteFragment fromSearch, toSearch;
-    private GoogleMap map;
+    private static GoogleMap map;
     private final int MY_LOCATION_PERMISSION = 100;
 
     private Marker origin, dest;
     private Place pickupPoint, endPoint;
 
-    private Polyline routeLine;
+    private static Polyline routeLine;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
@@ -68,11 +67,11 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        fromSearch = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.placeAutoCompleteFrom);
+        SupportPlaceAutocompleteFragment fromSearch = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.placeAutoCompleteFrom);
         fromSearch.setFilter(new AutocompleteFilter.Builder().setCountry("IE").build());
         fromSearch.setHint("Pickup From");
 
-        toSearch = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.placeAutoCompleteTo);
+        SupportPlaceAutocompleteFragment toSearch = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.placeAutoCompleteTo);
         toSearch.setFilter(new AutocompleteFilter.Builder().setCountry("IE").build());
         toSearch.setHint("Destination");
 
@@ -230,7 +229,7 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
         return data;
     }
 
-    private class DownloadDirections extends AsyncTask<String, Void, String> {
+    private static class DownloadDirections extends AsyncTask<String, Void, String> {
 
         @Override
         protected String doInBackground(String... url) {
@@ -255,7 +254,7 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
         }
     }
 
-    private class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
+    private static class ParserTask extends AsyncTask<String, Integer, List<List<HashMap<String,String>>> >{
 
         // Parsing the data in non-ui thread
         @Override
