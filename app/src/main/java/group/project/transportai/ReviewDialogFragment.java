@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,7 +26,6 @@ import java.util.Map;
 
 public class ReviewDialogFragment extends DialogFragment {
 
-    private AlertDialog.Builder dialog;
     private Context context;
 
     @Override
@@ -34,6 +34,7 @@ public class ReviewDialogFragment extends DialogFragment {
         this.context = context;
     }
 
+    @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
@@ -45,7 +46,7 @@ public class ReviewDialogFragment extends DialogFragment {
         final RatingBar ratingBar = view.findViewById(R.id.rbEnterRating);
         ratingBar.setNumStars(5);
 
-        dialog = new AlertDialog.Builder(getActivity());
+        AlertDialog.Builder dialog = new AlertDialog.Builder(getActivity());
 
         dialog.setTitle("Leave Review").setView(view);
 
@@ -57,7 +58,7 @@ public class ReviewDialogFragment extends DialogFragment {
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 Map<String, Object> reviews = new HashMap<>();
-                reviews.put("email", currentUser.getEmail());
+                reviews.put("userID", currentUser.getUid());
                 reviews.put("rating", ratingBar.getRating());
                 reviews.put("comment", editText.getText().toString());
                 Log.d("ONCLICK", reviews.toString());
