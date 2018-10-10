@@ -29,6 +29,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONObject;
 
@@ -41,6 +42,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import objects.DirectionsJSONParser;
 
@@ -93,6 +95,8 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
                     }
 
                     drawRoute(pickupPoint.getLatLng(), endPoint.getLatLng());
+
+                    postCoOrdsToDatabase();
                 }
             }
 
@@ -122,6 +126,8 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
                     }
 
                     drawRoute(pickupPoint.getLatLng(), endPoint.getLatLng());
+
+                    postCoOrdsToDatabase();
                 }
             }
 
@@ -133,6 +139,17 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
 
         SupportMapFragment mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
+    }
+
+    private void postCoOrdsToDatabase() {
+
+        Map<String, Object> route = new HashMap<>();
+        route.put("origin_latitude", pickupPoint.getLatLng().latitude);
+        route.put("origin_longitude", pickupPoint.getLatLng().longitude);
+        route.put("destination_latitude", endPoint.getLatLng().latitude);
+        route.put("destination_longitude", endPoint.getLatLng().longitude);
+
+        FirebaseFirestore.getInstance().collection("routes").add(route);
     }
 
     @Override
