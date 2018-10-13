@@ -1,7 +1,6 @@
 package group.project.transportai;
 
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -27,6 +26,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.braintreepayments.api.dropin.DropInActivity;
 import com.braintreepayments.api.dropin.DropInRequest;
 import com.braintreepayments.api.dropin.DropInResult;
 import com.braintreepayments.api.interfaces.HttpResponseCallback;
@@ -53,13 +53,8 @@ public class BookingActivity extends AppCompatActivity
 
     private static int PAYPAL_REQUEST_CODE = 2120;
 
-    // TODO Put in URL for retrieving token
-    private static final String API_GET_TOKEN = "https://ardra.herokuapp.com/braintree/client_token";
-
-    // TODO Add in URL for checkout process
     private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout";
 
-    private static String token;
     private String amount;
     private HashMap<String, String> paramsHashmap;
 
@@ -224,30 +219,33 @@ public class BookingActivity extends AppCompatActivity
     }
 
     private void getPayment() {
-        new getToken().execute();
-    }
-
-    private void submitPayment() {
-
+        DropInRequest dropIn = new DropInRequest().clientToken("sandbox_b8hbk65s_s2w84n9y8wd4dkpm");
+        startActivityForResult(dropIn.getIntent(this), PAYPAL_REQUEST_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (requestCode == PAYPAL_REQUEST_CODE && resultCode == RESULT_OK) {
-            DropInResult dropInResult = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
-            PaymentMethodNonce paymentNonce = dropInResult.getPaymentMethodNonce();
+        if (requestCode == PAYPAL_REQUEST_CODE) {
 
-            String strNonce = paymentNonce.getNonce();
+            if(resultCode == RESULT_OK) {
+                DropInResult dropInResult = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
+                PaymentMethodNonce paymentNonce = dropInResult.getPaymentMethodNonce();
 
-            amount = "15.00";
+                String strNonce = paymentNonce.getNonce();
 
-            paramsHashmap = new HashMap<>();
-            paramsHashmap.put("amount", amount);
-            paramsHashmap.put("payment_method_nonce", strNonce);
+                amount = "15.00";
 
-            sendPayment();
+                paramsHashmap = new HashMap<>();
+                paramsHashmap.put("amount", amount);
+                paramsHashmap.put("payment_method_nonce", strNonce);
+
+                sendPayment();
+            } else {
+                Exception ex = (Exception) data.getSerializableExtra(DropInActivity.EXTRA_ERROR);
+                Log.d("ERROR", ex.toString());
+            }
         }
     }
 
@@ -296,35 +294,5 @@ public class BookingActivity extends AppCompatActivity
         };
 
         requestQ.add(strRequest);
-
-    }
-
-    private class getToken extends AsyncTask<Void, Void, Void> {
-
-        @Override
-        protected Void doInBackground(Void... voids) {
-
-            HttpClient client = new HttpClient();
-            client.get(API_GET_TOKEN, new HttpResponseCallback() {
-
-                @Override
-                public void success(String responseBody) {
-                    token = responseBody;
-                    Log.d("Token", token);
-                }
-
-                @Override
-                public void failure(Exception exception) {
-                }
-            });
-
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
-            DropInRequest dropInRequest = new DropInRequest().clientToken(token);
-            startActivityForResult(dropInRequest.getIntent(BookingActivity.this), PAYPAL_REQUEST_CODE);
-        }
     }
 }
