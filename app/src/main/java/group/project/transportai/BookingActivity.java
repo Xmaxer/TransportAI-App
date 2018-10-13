@@ -13,6 +13,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -50,13 +51,13 @@ public class BookingActivity extends AppCompatActivity
 
     private int bookingStage;
 
-    private int PAYPAL_REQUEST_CODE = 2120;
+    private static int PAYPAL_REQUEST_CODE = 2120;
 
     // TODO Put in URL for retrieving token
-    private static final String API_GET_TOKEN = "URL for retrieving token";
+    private static final String API_GET_TOKEN = "https://ardra.herokuapp.com/braintree/client_token";
 
     // TODO Add in URL for checkout process
-    private static final String API_CHECKOUT = "URL for checkout process";
+    private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout";
 
     private static String token;
     private String amount;
@@ -224,13 +225,10 @@ public class BookingActivity extends AppCompatActivity
 
     private void getPayment() {
         new getToken().execute();
-
-        submitPayment();
     }
 
     private void submitPayment() {
-        DropInRequest dropInRequest = new DropInRequest().clientToken(token);
-        startActivityForResult(dropInRequest.getIntent(this), PAYPAL_REQUEST_CODE);
+
     }
 
     @Override
@@ -240,13 +238,14 @@ public class BookingActivity extends AppCompatActivity
         if (requestCode == PAYPAL_REQUEST_CODE && resultCode == RESULT_OK) {
             DropInResult dropInResult = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
             PaymentMethodNonce paymentNonce = dropInResult.getPaymentMethodNonce();
+
             String strNonce = paymentNonce.getNonce();
 
             amount = "15.00";
 
             paramsHashmap = new HashMap<>();
             paramsHashmap.put("amount", amount);
-            paramsHashmap.put("nonce", strNonce);
+            paramsHashmap.put("payment_method_nonce", strNonce);
 
             sendPayment();
         }
@@ -300,7 +299,7 @@ public class BookingActivity extends AppCompatActivity
 
     }
 
-    private static class getToken extends AsyncTask<Void, Void, Void> {
+    private class getToken extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -311,15 +310,21 @@ public class BookingActivity extends AppCompatActivity
                 @Override
                 public void success(String responseBody) {
                     token = responseBody;
+                    Log.d("Token", token);
                 }
 
                 @Override
                 public void failure(Exception exception) {
-
                 }
             });
 
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            DropInRequest dropInRequest = new DropInRequest().clientToken(token);
+            startActivityForResult(dropInRequest.getIntent(BookingActivity.this), PAYPAL_REQUEST_CODE);
         }
     }
 }
