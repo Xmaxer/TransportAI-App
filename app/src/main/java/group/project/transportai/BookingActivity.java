@@ -1,6 +1,7 @@
 package group.project.transportai;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -16,10 +17,24 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.braintreepayments.api.dropin.DropInRequest;
 import com.braintreepayments.api.dropin.DropInResult;
+import com.braintreepayments.api.interfaces.HttpResponseCallback;
+import com.braintreepayments.api.internal.HttpClient;
+import com.braintreepayments.api.models.PaymentMethodNonce;
 import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BookingActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -36,6 +51,16 @@ public class BookingActivity extends AppCompatActivity
     private int bookingStage;
 
     private int PAYPAL_REQUEST_CODE = 2120;
+
+    // TODO Put in URL for retrieving token
+    private static final String API_GET_TOKEN = "URL for retrieving token";
+
+    // TODO Add in URL for checkout process
+    private static final String API_CHECKOUT = "URL for checkout process";
+
+    private static String token;
+    private String amount;
+    private HashMap<String, String> paramsHashmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +125,7 @@ public class BookingActivity extends AppCompatActivity
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
-        } else if(id == R.id.sign_out) {
+        } else if (id == R.id.sign_out) {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(BookingActivity.this, Main.class));
             finish();
@@ -116,7 +141,7 @@ public class BookingActivity extends AppCompatActivity
 
         Fragment fragment = null;
 
-        switch(item.getItemId()) {
+        switch (item.getItemId()) {
             case R.id.nav_bookRide:
                 fragment = locationFragment;
 
@@ -148,7 +173,7 @@ public class BookingActivity extends AppCompatActivity
                 break;
         }
 
-        if(fragment != null) {
+        if (fragment != null) {
             fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, fragment).commit();
         }
 
@@ -159,18 +184,18 @@ public class BookingActivity extends AppCompatActivity
 
     @Override
     public void onClick(View v) {
-        switch(v.getId()) {
+        switch (v.getId()) {
             case R.id.bPrevious:
                 // TODO Move to previous fragment in booking process, make invisible and unclickable if going back to LocationFragment
 
-                if(bookingStage == CAR_SELECT_STAGE) {
+                if (bookingStage == CAR_SELECT_STAGE) {
                     bookingStage = MAP_STAGE;
 
                     fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
 
                     bPrevious.setVisibility(View.INVISIBLE);
                     bPrevious.setClickable(false);
-                } else if(bookingStage == PAYMENT_STAGE) {
+                } else if (bookingStage == PAYMENT_STAGE) {
                     bookingStage = CAR_SELECT_STAGE;
 
                     fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, carSelectionFragment).commit();
@@ -179,36 +204,122 @@ public class BookingActivity extends AppCompatActivity
                 break;
             case R.id.bNext:
                 // TODO Move forward to next fragment, make bPrevious visible and clickable to go back
-                if(bookingStage == MAP_STAGE) {
+                if (bookingStage == MAP_STAGE) {
                     bookingStage = CAR_SELECT_STAGE;
 
                     fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, carSelectionFragment).commit();
 
                     bPrevious.setVisibility(View.VISIBLE);
                     bPrevious.setClickable(true);
-                } else if(bookingStage == CAR_SELECT_STAGE) {
+                } else if (bookingStage == CAR_SELECT_STAGE) {
                     bookingStage = PAYMENT_STAGE;
-
-                    DropInRequest dropInUIRequest = new DropInRequest()
-                            .clientToken("eyJ2ZXJzaW9uIjoyLCJhdXRob3JpemF0aW9uRmluZ2VycHJpbnQiOiJmOWUxMmM4ZjI5YWMxZjZiMTJhNzliNGEyOWQzMjQ1YTc4MGZjOTAzYWE2M2U4OTAwNGNlZTA3YjBjNzI5MGU1fGNyZWF0ZWRfYXQ9MjAxOC0xMC0wNVQxODo0OTo1My41ODkxNzkyNjcrMDAwMFx1MDAyNm1lcmNoYW50X2lkPTM0OHBrOWNnZjNiZ3l3MmJcdTAwMjZwdWJsaWNfa2V5PTJuMjQ3ZHY4OWJxOXZtcHIiLCJjb25maWdVcmwiOiJodHRwczovL2FwaS5zYW5kYm94LmJyYWludHJlZWdhdGV3YXkuY29tOjQ0My9tZXJjaGFudHMvMzQ4cGs5Y2dmM2JneXcyYi9jbGllbnRfYXBpL3YxL2NvbmZpZ3VyYXRpb24iLCJncmFwaFFMIjp7InVybCI6Imh0dHBzOi8vcGF5bWVudHMuc2FuZGJveC5icmFpbnRyZWUtYXBpLmNvbS9ncmFwaHFsIiwiZGF0ZSI6IjIwMTgtMDUtMDgifSwiY2hhbGxlbmdlcyI6W10sImVudmlyb25tZW50Ijoic2FuZGJveCIsImNsaWVudEFwaVVybCI6Imh0dHBzOi8vYXBpLnNhbmRib3guYnJhaW50cmVlZ2F0ZXdheS5jb206NDQzL21lcmNoYW50cy8zNDhwazljZ2YzYmd5dzJiL2NsaWVudF9hcGkiLCJhc3NldHNVcmwiOiJodHRwczovL2Fzc2V0cy5icmFpbnRyZWVnYXRld2F5LmNvbSIsImF1dGhVcmwiOiJodHRwczovL2F1dGgudmVubW8uc2FuZGJveC5icmFpbnRyZWVnYXRld2F5LmNvbSIsImFuYWx5dGljcyI6eyJ1cmwiOiJodHRwczovL29yaWdpbi1hbmFseXRpY3Mtc2FuZC5zYW5kYm94LmJyYWludHJlZS1hcGkuY29tLzM0OHBrOWNnZjNiZ3l3MmIifSwidGhyZWVEU2VjdXJlRW5hYmxlZCI6dHJ1ZSwicGF5cGFsRW5hYmxlZCI6dHJ1ZSwicGF5cGFsIjp7ImRpc3BsYXlOYW1lIjoiQWNtZSBXaWRnZXRzLCBMdGQuIChTYW5kYm94KSIsImNsaWVudElkIjpudWxsLCJwcml2YWN5VXJsIjoiaHR0cDovL2V4YW1wbGUuY29tL3BwIiwidXNlckFncmVlbWVudFVybCI6Imh0dHA6Ly9leGFtcGxlLmNvbS90b3MiLCJiYXNlVXJsIjoiaHR0cHM6Ly9hc3NldHMuYnJhaW50cmVlZ2F0ZXdheS5jb20iLCJhc3NldHNVcmwiOiJodHRwczovL2NoZWNrb3V0LnBheXBhbC5jb20iLCJkaXJlY3RCYXNlVXJsIjpudWxsLCJhbGxvd0h0dHAiOnRydWUsImVudmlyb25tZW50Tm9OZXR3b3JrIjp0cnVlLCJlbnZpcm9ubWVudCI6Im9mZmxpbmUiLCJ1bnZldHRlZE1lcmNoYW50IjpmYWxzZSwiYnJhaW50cmVlQ2xpZW50SWQiOiJtYXN0ZXJjbGllbnQzIiwiYmlsbGluZ0FncmVlbWVudHNFbmFibGVkIjp0cnVlLCJtZXJjaGFudEFjY291bnRJZCI6ImFjbWV3aWRnZXRzbHRkc2FuZGJveCIsImN1cnJlbmN5SXNvQ29kZSI6IlVTRCJ9LCJtZXJjaGFudElkIjoiMzQ4cGs5Y2dmM2JneXcyYiIsInZlbm1vIjoib2ZmIn0=");
-
-                    startActivityForResult(dropInUIRequest.getIntent(this), PAYPAL_REQUEST_CODE);
-                } else if(bookingStage == PAYMENT_STAGE) {
-
+                    getPayment();
+                } else if (bookingStage == PAYMENT_STAGE) {
                     DialogFragment reviewDialog = new ReviewDialogFragment();
                     reviewDialog.show(fragmentManager, "ReviewDialog");
-
                 }
                 break;
         }
+    }
+
+    private void getPayment() {
+        new getToken().execute();
+
+        submitPayment();
+    }
+
+    private void submitPayment() {
+        DropInRequest dropInRequest = new DropInRequest().clientToken(token);
+        startActivityForResult(dropInRequest.getIntent(this), PAYPAL_REQUEST_CODE);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if(requestCode == PAYPAL_REQUEST_CODE && resultCode == RESULT_OK) {
+        if (requestCode == PAYPAL_REQUEST_CODE && resultCode == RESULT_OK) {
             DropInResult dropInResult = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
+            PaymentMethodNonce paymentNonce = dropInResult.getPaymentMethodNonce();
+            String strNonce = paymentNonce.getNonce();
+
+            amount = "15.00";
+
+            paramsHashmap = new HashMap<>();
+            paramsHashmap.put("amount", amount);
+            paramsHashmap.put("nonce", strNonce);
+
+            sendPayment();
+        }
+    }
+
+    private void sendPayment() {
+
+        RequestQueue requestQ = Volley.newRequestQueue(BookingActivity.this);
+
+        StringRequest strRequest = new StringRequest(Request.Method.POST, API_CHECKOUT,
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        if (response.contains("Successful")) {
+                            Toast.makeText(BookingActivity.this, "Payment Completed", Toast.LENGTH_LONG).show();
+                        } else {
+                            Toast.makeText(BookingActivity.this, "Payment not successful", Toast.LENGTH_LONG).show();
+                        }
+                    }
+                },
+
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> params = new HashMap<>();
+
+                for(String key : paramsHashmap.keySet()) {
+                    params.put(key, paramsHashmap.get(key));
+                }
+
+                return params;
+            }
+
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                Map<String, String> headerParams = new HashMap<>();
+                headerParams.put("Content-Type", "application/x-www-form-urlencoded");
+                return headerParams;
+            }
+        };
+
+        requestQ.add(strRequest);
+
+    }
+
+    private static class getToken extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            HttpClient client = new HttpClient();
+            client.get(API_GET_TOKEN, new HttpResponseCallback() {
+
+                @Override
+                public void success(String responseBody) {
+                    token = responseBody;
+                }
+
+                @Override
+                public void failure(Exception exception) {
+
+                }
+            });
+
+            return null;
         }
     }
 }
