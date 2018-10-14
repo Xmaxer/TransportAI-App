@@ -3,7 +3,6 @@ package group.project.transportai;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -26,14 +25,6 @@ import java.util.Map;
 
 public class ReviewDialogFragment extends DialogFragment {
 
-    private Context context;
-
-    @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        this.context = context;
-    }
-
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -54,7 +45,6 @@ public class ReviewDialogFragment extends DialogFragment {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                editText.getText();
                 FirebaseFirestore db = FirebaseFirestore.getInstance();
                 FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                 Map<String, Object> reviews = new HashMap<>();
@@ -69,8 +59,8 @@ public class ReviewDialogFragment extends DialogFragment {
                     }
                 });
                 dialog.dismiss();
-                Toast.makeText(context,"Thank you for your input!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(context, BookingActivity.class));
+                Toast.makeText(getActivity(),"Thank you for your input!", Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(getActivity(), BookingActivity.class));
 
             }
         });
@@ -79,7 +69,7 @@ public class ReviewDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                startActivity(new Intent(context, BookingActivity.class));
+                startActivity(new Intent(getActivity(), BookingActivity.class));
             }
         });
 
