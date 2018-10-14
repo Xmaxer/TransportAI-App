@@ -2,7 +2,7 @@ package group.project.transportai;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Intent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -23,7 +23,17 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
+import interfaces.BookingProcessCompleteListener;
+
 public class ReviewDialogFragment extends DialogFragment {
+
+    private BookingProcessCompleteListener bookingCompleteListener;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        bookingCompleteListener = (BookingProcessCompleteListener) getActivity();
+    }
 
     @NonNull
     @Override
@@ -60,7 +70,7 @@ public class ReviewDialogFragment extends DialogFragment {
                 });
                 dialog.dismiss();
                 Toast.makeText(getActivity(),"Thank you for your input!", Toast.LENGTH_SHORT).show();
-                startActivity(new Intent(getActivity(), BookingActivity.class));
+                bookingCompleteListener.onBookingComplete();
 
             }
         });
@@ -69,7 +79,7 @@ public class ReviewDialogFragment extends DialogFragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();
-                startActivity(new Intent(getActivity(), BookingActivity.class));
+                bookingCompleteListener.onBookingComplete();
             }
         });
 
