@@ -32,8 +32,10 @@ import com.google.firebase.auth.FirebaseAuth;
 import java.util.HashMap;
 import java.util.Map;
 
+import interfaces.BookingProcessCompleteListener;
+
 public class BookingActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, BookingProcessCompleteListener {
 
     Fragment locationFragment, reviewFragment, travelPointsFragment, carSelectionFragment;
     FragmentManager fragmentManager;
@@ -284,5 +286,10 @@ public class BookingActivity extends AppCompatActivity
         };
 
         requestQ.add(strRequest);
+    }
+
+    @Override
+    public void onBookingComplete() {
+        fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
     }
 }
