@@ -31,8 +31,6 @@ import com.google.android.gms.maps.model.Polyline;
 import com.google.android.gms.maps.model.PolylineOptions;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.BufferedReader;
@@ -129,7 +127,6 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
                     }
 
                     drawRoute(pickupPoint.getLatLng(), endPoint.getLatLng());
-                    getDistance(pickupPoint.getLatLng(), endPoint.getLatLng());
 
                     postCoOrdsToDatabase();
                 }
@@ -182,39 +179,11 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
 
     }
 
-    private void getDistance(LatLng origin, LatLng dest) {
-
-        String url = getDistanceURL(origin, dest);
-
-        GetDistance getDist = new GetDistance();
-        getDist.execute(url);
-
-    }
-
-    private String getDistanceURL(LatLng begin, LatLng end) {
-
-        String origin = "origin=" + begin.latitude + "," + begin.longitude;
-
-        String destination = "destination=" + end.latitude + "," + end.longitude;
-
-        String sensor = "sensor=false";
-
-        String params = origin + "&" + destination + "&" + sensor;
-
-        return "https://maps.googleapis.com/maps/api/distancematrix/json?" + params +
-                "&key=AIzaSyDl5UpgvdzRA9pFyjgFHT4yLlIHlAPgXGc";
-    }
-
     private String getDirectionsURL(LatLng begin, LatLng end) {
 
         String origin = "origin=" + begin.latitude + "," + begin.longitude;
 
         String destination = "destination=" + end.latitude + "," + end.longitude;
-
-        Log.d("Coords", String.valueOf(begin.latitude));
-        Log.d("Coords", String.valueOf(begin.longitude));
-        Log.d("Coords", String.valueOf(end.latitude));
-        Log.d("Coords", String.valueOf(end.longitude));
 
         String sensor = "sensor=false";
 
@@ -296,10 +265,13 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
 
             try{
                 jObject = new JSONObject(jsonData[0]);
-                DirectionsJSONParser parser = new DirectionsJSONParser();
+                DirectionsJSONParser parser = new DirectionsJSONParser(jObject);
 
                 // Starts parsing data
-                routes = parser.parse(jObject);
+                routes = parser.parseRouteData();
+                dist = parser.getDistance();
+
+                Log.d("Distance", String.valueOf(dist));
             }catch(Exception e){
                 e.printStackTrace();
             }
@@ -339,48 +311,6 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
 
             // Drawing polyline in the Google Map for the i-th route
             routeLine = map.addPolyline(lineOptions);
-        }
-    }
-
-    private static class GetDistance extends AsyncTask<String, Void, String> {
-
-        @Override
-        protected String doInBackground(String... url) {
-
-            String data = "";
-
-            try {
-                data = downloadUrl(url[0]);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return data;
-        }
-
-        @Override
-        protected void onPostExecute(String s) {
-            super.onPostExecute(s);
-
-            Log.d("Routes", s);
-            try {
-                JSONObject jObj = new JSONObject(s);
-
-                JSONArray jArray = jObj.getJSONArray("routes");
-
-                JSONObject routes = jArray.getJSONObject(0);
-
-                JSONArray legsArray = routes.getJSONArray("legs");
-
-                JSONObject distance = legsArray.getJSONObject(0).getJSONObject("distance");
-
-                dist = Double.parseDouble(distance.getString("value"));
-
-                Log.d("Distance", String.valueOf(dist));
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
         }
     }
 }
