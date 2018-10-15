@@ -12,10 +12,16 @@ import java.util.List;
 
 public class DirectionsJSONParser {
 
+    private JSONObject jObject;
+
+    public DirectionsJSONParser(JSONObject jObject) {
+        this.jObject = jObject;
+    }
+
     /**
      * Receives a JSONObject and returns a list of lists containing latitude and longitude
      */
-    public List<List<HashMap<String, String>>> parse(JSONObject jObject) {
+    public List<List<HashMap<String, String>>> parseRouteData() {
 
         List<List<HashMap<String, String>>> routes = new ArrayList<>();
         JSONArray jRoutes;
@@ -91,5 +97,25 @@ public class DirectionsJSONParser {
         }
 
         return poly;
+    }
+
+    public Double getDistance() {
+
+        JSONArray jArray = null;
+        try {
+            jArray = jObject.getJSONArray("routes");
+
+            JSONObject routes = jArray.getJSONObject(0);
+
+            JSONArray legsArray = routes.getJSONArray("legs");
+
+            JSONObject distance = legsArray.getJSONObject(0).getJSONObject("distance");
+
+            return Double.parseDouble(distance.getString("value"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return null;
     }
 }
