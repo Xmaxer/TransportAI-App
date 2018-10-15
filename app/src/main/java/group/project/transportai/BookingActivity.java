@@ -262,6 +262,7 @@ public class BookingActivity extends AppCompatActivity
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
+                        error.printStackTrace();
                         Toast.makeText(BookingActivity.this, "Payment Failed", Toast.LENGTH_LONG).show();
                     }
                 }) {
