@@ -30,4 +30,9 @@
 	<string name="twitter_consumer_key">ihKEVzAKZi7yaujUrRWFKINmH</string>
 	<string name="twitter_consumer_secret">sZlGte7uOlQkNYNgi8vlvPRQrW3NX53V5XTiA8yp0ttQbAoxqN</string>
     <string name="sign_out">Sign Out</string>
+    <string name="origin">Origin</string>
+    <string name="destination">Destination</string>
+    <string name="distance">Distance</string>
+    <string name="cost">Cost (€)</string>
+    <string name="pay">Pay</string>
 </resources>
