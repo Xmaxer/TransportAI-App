@@ -27,9 +27,8 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -47,9 +46,12 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
     private HashMap<String, String> paramsHashmap;
 
-    private int currentTravelPoints, travelPointsEarned;
+    private long currentTravelPoints;
+    private int travelPointsEarned;
 
     private TextView costText;
+
+    private boolean travelPointsUsed = false;
 
     @Nullable
     @Override
@@ -64,7 +66,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
         baseCost = round(10 + (distance / 1000), 2);
 
-        travelPointsEarned = (int) Math.ceil(distance / 10);
+        travelPointsEarned = (int) Math.ceil(distance / 100);
 
         return inflater.inflate(R.layout.fragment_payment_details_layout, container, false);
     }
@@ -148,9 +150,16 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
+                            Map<String, Object> pointsMap = new HashMap<>();
+                            if (travelPointsUsed) {
+                                pointsMap.put("points", travelPointsEarned);
+                            } else {
+                                pointsMap.put("points", currentTravelPoints + travelPointsEarned);
+                            }
+
                             FirebaseFirestore.getInstance()
                                     .collection("points")
-                                    .document(user.getUid()).update("points", currentTravelPoints + travelPointsEarned)
+                                    .document(user.getUid()).set(pointsMap)
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
@@ -160,7 +169,6 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                                             }
                                         }
                                     });
-
                         }
                     }
                 },
@@ -198,27 +206,27 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-        if(isChecked) {
+        if (isChecked) {
+
+            travelPointsUsed = true;
+
             FirebaseFirestore.getInstance().collection("points")
-                    .whereEqualTo("userID", FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if(task.isSuccessful()) {
-                        if(!task.getResult().isEmpty()) {
-                            for (QueryDocumentSnapshot doc : task.getResult()) {
-                                currentTravelPoints = (int) doc.get("points");
-                            }
-                        }
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+
+                    if (task.isSuccessful()) {
+                        currentTravelPoints = (long) task.getResult().get("points");
+                        discountedCost = Math.round(baseCost - currentTravelPoints / 500);
                     }
                 }
             });
 
-            discountedCost = baseCost - Math.ceil(currentTravelPoints / 500);
         } else {
             discountedCost = baseCost;
+            travelPointsUsed = false;
         }
-
         costText.setText(String.valueOf(discountedCost));
     }
 }
