@@ -1,6 +1,7 @@
 package group.project.transportai;
 
 import android.Manifest;
+import android.content.Context;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.os.AsyncTask;
@@ -44,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import interfaces.RouteSelectedListener;
 import objects.DirectionsJSONParser;
 
 public class LocationFragment extends Fragment implements OnMapReadyCallback {
@@ -58,6 +60,15 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
 
     private static double dist;
 
+    private RouteSelectedListener routeSelectedListener;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        routeSelectedListener = (RouteSelectedListener) context;
+    }
+
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -69,7 +80,7 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        SupportPlaceAutocompleteFragment fromSearch = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.placeAutoCompleteFrom);
+        final SupportPlaceAutocompleteFragment fromSearch = (SupportPlaceAutocompleteFragment) getChildFragmentManager().findFragmentById(R.id.placeAutoCompleteFrom);
         fromSearch.setFilter(new AutocompleteFilter.Builder().setCountry("IE").build());
         fromSearch.setHint("Pickup From");
 
@@ -96,6 +107,8 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
                     }
 
                     drawRoute(pickupPoint.getLatLng(), endPoint.getLatLng());
+
+                    routeSelectedListener.onRouteSelected(pickupPoint.getName().toString(), endPoint.getName().toString());
 
                     postCoOrdsToDatabase();
                 }
@@ -127,6 +140,8 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
                     }
 
                     drawRoute(pickupPoint.getLatLng(), endPoint.getLatLng());
+
+                    routeSelectedListener.onRouteSelected(pickupPoint.getName().toString(), endPoint.getName().toString());
 
                     postCoOrdsToDatabase();
                 }
