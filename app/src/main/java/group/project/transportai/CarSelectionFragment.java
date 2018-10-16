@@ -1,5 +1,6 @@
 package group.project.transportai;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,10 +13,20 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import adapters.CarSelectionListAdapter;
+import interfaces.CarSelectedListener;
 
 public class CarSelectionFragment extends Fragment {
 
     private RecyclerView rvCarSelectList;
+
+    private CarSelectedListener carSelectedListener;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+
+        carSelectedListener = (CarSelectedListener) context;
+    }
 
     @Nullable
     @Override
@@ -39,7 +50,7 @@ public class CarSelectionFragment extends Fragment {
 
         rvCarSelectList.setItemAnimator(new DefaultItemAnimator());
 
-        CarSelectionListAdapter carListAdapter = new CarSelectionListAdapter();
+        CarSelectionListAdapter carListAdapter = new CarSelectionListAdapter(carSelectedListener);
         rvCarSelectList.setAdapter(carListAdapter);
     }
 }
