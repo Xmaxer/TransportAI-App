@@ -18,6 +18,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 import group.project.transportai.R;
+import interfaces.CarSelectedListener;
 import objects.Car;
 
 public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionListAdapter.ViewHolder> {
@@ -25,7 +26,12 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
     private ArrayList<Car> carList = new ArrayList<>();
     private int selectedItem = -1;
 
-    public CarSelectionListAdapter() {
+    private CarSelectedListener carSelectedListener;
+
+    public CarSelectionListAdapter(CarSelectedListener carSelectedListener) {
+
+        this.carSelectedListener = carSelectedListener;
+
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
         db.collection("cars").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -78,6 +84,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
                 public void onClick(View v) {
                     selectedItem = getAdapterPosition();
                     notifyItemRangeChanged(0, carList.size());
+                    carSelectedListener.onCarSelected(carList.get(selectedItem).getCarModel());
                 }
             };
 
