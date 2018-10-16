@@ -60,7 +60,7 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
 
     private static double dist;
 
-    private RouteSelectedListener routeSelectedListener;
+    private static RouteSelectedListener routeSelectedListener;
 
     @Override
     public void onAttach(Context context) {
@@ -286,7 +286,7 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
                 routes = parser.parseRouteData();
                 dist = parser.getDistance();
 
-                Log.d("Distance", String.valueOf(dist));
+                routeSelectedListener.onDistanceCalculated(dist);
             }catch(Exception e){
                 e.printStackTrace();
             }
