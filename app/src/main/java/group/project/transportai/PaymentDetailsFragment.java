@@ -29,7 +29,8 @@ import static android.app.Activity.RESULT_OK;
 
 public class PaymentDetailsFragment extends Fragment implements View.OnClickListener {
 
-    private String origin, destination, distance, cost;
+    private String origin, destination;
+    private double distance, cost;
     private static int PAYPAL_REQUEST_CODE = 2120;
 
     private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout";
@@ -44,8 +45,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
         origin = args.getString("Origin");
         destination = args.getString("Destination");
-        distance = args.getString("Distance");
-        cost = args.getString("Cost");
+        distance = args.getDouble("Distance");
 
         return inflater.inflate(R.layout.fragment_payment_details_layout, container, false);
     }
@@ -61,10 +61,12 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         destText.setText(destination);
 
         TextView distanceText = view.findViewById(R.id.tvDistanceData);
-        distanceText.setText(distance);
+        distanceText.setText(String.valueOf(distance));
+
+        cost = 10 + (distance / 1000);
 
         TextView costText = view.findViewById(R.id.tvCostData);
-        costText.setText(cost);
+        costText.setText(String.valueOf(cost));
 
         Button payButton = view.findViewById(R.id.bPay);
         payButton.setOnClickListener(this);
@@ -93,7 +95,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                 String strNonce = paymentNonce.getNonce();
 
                 paramsHashmap = new HashMap<>();
-                paramsHashmap.put("amount", cost);
+                paramsHashmap.put("amount", String.valueOf(cost));
                 paramsHashmap.put("payment_method_nonce", strNonce);
 
                 sendPayment();
