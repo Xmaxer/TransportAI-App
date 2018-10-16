@@ -197,6 +197,7 @@ public class BookingActivity extends AppCompatActivity
                     Bundle args = new Bundle();
                     args.putString("Origin", origin);
                     args.putString("Destination", destination);
+                    args.putString("CarModel", carModel);
                     args.putDouble("Distance", distance);
 
                     payDetailsFragment.setArguments(args);
