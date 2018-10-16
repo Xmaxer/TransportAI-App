@@ -16,26 +16,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
-
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
-import com.braintreepayments.api.dropin.DropInRequest;
-import com.braintreepayments.api.dropin.DropInResult;
-import com.braintreepayments.api.models.PaymentMethodNonce;
 import com.google.firebase.auth.FirebaseAuth;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import interfaces.BookingProcessCompleteListener;
+import interfaces.CarSelectedListener;
+import interfaces.RouteSelectedListener;
 
 public class BookingActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, BookingProcessCompleteListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, BookingProcessCompleteListener,
+        RouteSelectedListener, CarSelectedListener {
 
     Fragment locationFragment, reviewFragment, travelPointsFragment, carSelectionFragment;
     FragmentManager fragmentManager;
@@ -47,13 +36,6 @@ public class BookingActivity extends AppCompatActivity
     private static final int PAYMENT_STAGE = 3;
 
     private int bookingStage;
-
-    private static int PAYPAL_REQUEST_CODE = 2120;
-
-    private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout";
-
-    private String amount;
-    private HashMap<String, String> paramsHashmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -86,6 +68,7 @@ public class BookingActivity extends AppCompatActivity
         bPrevious.setClickable(false);
 
         bNext = findViewById(R.id.bNext);
+        bNext.setClickable(false);
         bNext.setOnClickListener(this);
 
         bookingStage = MAP_STAGE;
@@ -204,9 +187,22 @@ public class BookingActivity extends AppCompatActivity
 
                     bPrevious.setVisibility(View.VISIBLE);
                     bPrevious.setClickable(true);
+                    bNext.setClickable(false);
                 } else if (bookingStage == CAR_SELECT_STAGE) {
                     bookingStage = PAYMENT_STAGE;
-                    getPayment();
+
+                    PaymentDetailsFragment payDetailsFragment = new PaymentDetailsFragment();
+
+                    Bundle args = new Bundle();
+                    args.putString("Origin", "Placeholder");
+                    args.putString("Destination", "Placeholder");
+                    args.putString("Distance", "2345");
+                    args.putString("Cost", "34.56");
+
+                    payDetailsFragment.setArguments(args);
+
+                    fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, payDetailsFragment).commit();
+
                 } else if (bookingStage == PAYMENT_STAGE) {
                     DialogFragment reviewDialog = new ReviewDialogFragment();
                     reviewDialog.show(fragmentManager, "ReviewDialog");
@@ -215,82 +211,18 @@ public class BookingActivity extends AppCompatActivity
         }
     }
 
-    private void getPayment() {
-        DropInRequest dropIn = new DropInRequest().clientToken("sandbox_b8hbk65s_s2w84n9y8wd4dkpm");
-        startActivityForResult(dropIn.getIntent(this), PAYPAL_REQUEST_CODE);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == PAYPAL_REQUEST_CODE) {
-
-            if (resultCode == RESULT_OK) {
-                DropInResult dropInResult = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
-                PaymentMethodNonce paymentNonce = dropInResult.getPaymentMethodNonce();
-
-                String strNonce = paymentNonce.getNonce();
-
-                amount = "15.00";
-
-                paramsHashmap = new HashMap<>();
-                paramsHashmap.put("amount", amount);
-                paramsHashmap.put("payment_method_nonce", strNonce);
-
-                sendPayment();
-            }
-        }
-    }
-
-    private void sendPayment() {
-
-        RequestQueue requestQ = Volley.newRequestQueue(BookingActivity.this);
-
-        StringRequest strRequest = new StringRequest(Request.Method.POST, API_CHECKOUT,
-                new Response.Listener<String>() {
-
-                    @Override
-                    public void onResponse(String response) {
-                        if (response.contains("Successful")) {
-                            Toast.makeText(BookingActivity.this, "Payment Completed", Toast.LENGTH_LONG).show();
-                        }
-                    }
-                },
-
-                new Response.ErrorListener() {
-
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
-                        Toast.makeText(BookingActivity.this, "Payment Failed", Toast.LENGTH_LONG).show();
-                    }
-                }) {
-            @Override
-            protected Map<String, String> getParams() {
-
-                Map<String, String> params = new HashMap<>();
-
-                for (String key : paramsHashmap.keySet()) {
-                    params.put(key, paramsHashmap.get(key));
-                }
-
-                return params;
-            }
-
-            @Override
-            public Map<String, String> getHeaders() {
-                Map<String, String> headerParams = new HashMap<>();
-                headerParams.put("Content-Type", "application/x-www-form-urlencoded");
-                return headerParams;
-            }
-        };
-
-        requestQ.add(strRequest);
-    }
-
     @Override
     public void onBookingComplete() {
         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
+    }
+
+    @Override
+    public void onRouteSelected(String origin, String destination) {
+        bNext.setClickable(true);
+    }
+
+    @Override
+    public void onCarSelected(String carModel) {
+
     }
 }
