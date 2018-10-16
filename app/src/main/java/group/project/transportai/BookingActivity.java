@@ -37,10 +37,22 @@ public class BookingActivity extends AppCompatActivity
 
     private int bookingStage;
 
+    private String origin, destination, carModel;
+    private double distance;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
+
+        bNext = findViewById(R.id.bNext);
+        bNext.setOnClickListener(this);
+
+        bPrevious = findViewById(R.id.bPrevious);
+        bPrevious.setOnClickListener(this);
+        bPrevious.setVisibility(View.INVISIBLE);
+        bPrevious.setClickable(false);
+
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -61,15 +73,6 @@ public class BookingActivity extends AppCompatActivity
         carSelectionFragment = new CarSelectionFragment();
 
         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
-
-        bPrevious = findViewById(R.id.bPrevious);
-        bPrevious.setOnClickListener(this);
-        bPrevious.setVisibility(View.INVISIBLE);
-        bPrevious.setClickable(false);
-
-        bNext = findViewById(R.id.bNext);
-        bNext.setClickable(false);
-        bNext.setOnClickListener(this);
 
         bookingStage = MAP_STAGE;
     }
@@ -125,7 +128,6 @@ public class BookingActivity extends AppCompatActivity
                 bPrevious.setClickable(false);
 
                 bNext.setVisibility(View.VISIBLE);
-                bNext.setClickable(true);
 
                 bookingStage = MAP_STAGE;
                 break;
@@ -187,17 +189,15 @@ public class BookingActivity extends AppCompatActivity
 
                     bPrevious.setVisibility(View.VISIBLE);
                     bPrevious.setClickable(true);
-                    bNext.setClickable(false);
                 } else if (bookingStage == CAR_SELECT_STAGE) {
                     bookingStage = PAYMENT_STAGE;
 
                     PaymentDetailsFragment payDetailsFragment = new PaymentDetailsFragment();
 
                     Bundle args = new Bundle();
-                    args.putString("Origin", "Placeholder");
-                    args.putString("Destination", "Placeholder");
-                    args.putString("Distance", "2345");
-                    args.putString("Cost", "34.56");
+                    args.putString("Origin", origin);
+                    args.putString("Destination", destination);
+                    args.putDouble("Distance", distance);
 
                     payDetailsFragment.setArguments(args);
 
@@ -218,11 +218,17 @@ public class BookingActivity extends AppCompatActivity
 
     @Override
     public void onRouteSelected(String origin, String destination) {
-        bNext.setClickable(true);
+        this.origin = origin;
+        this.destination = destination;
+    }
+
+    @Override
+    public void onDistanceCalculated(double distance) {
+        this.distance = distance;
     }
 
     @Override
     public void onCarSelected(String carModel) {
-
+        this.carModel = carModel;
     }
 }
