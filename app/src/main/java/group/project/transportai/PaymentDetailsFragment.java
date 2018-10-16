@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +23,13 @@ import com.android.volley.toolbox.Volley;
 import com.braintreepayments.api.dropin.DropInRequest;
 import com.braintreepayments.api.dropin.DropInResult;
 import com.braintreepayments.api.models.PaymentMethodNonce;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
@@ -28,15 +37,19 @@ import java.util.Map;
 
 import static android.app.Activity.RESULT_OK;
 
-public class PaymentDetailsFragment extends Fragment implements View.OnClickListener {
+public class PaymentDetailsFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
-    private String origin, destination;
-    private double distance, cost;
+    private String origin, destination, carModel;
+    private double distance, discountedCost, baseCost;
     private static int PAYPAL_REQUEST_CODE = 2120;
 
     private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout";
 
     private HashMap<String, String> paramsHashmap;
+
+    private int currentTravelPoints, travelPointsEarned;
+
+    private TextView costText;
 
     @Nullable
     @Override
@@ -46,7 +59,12 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
         origin = args.getString("Origin");
         destination = args.getString("Destination");
+        carModel = args.getString("CarModel");
         distance = args.getDouble("Distance");
+
+        baseCost = round(10 + (distance / 1000), 2);
+
+        travelPointsEarned = (int) Math.ceil(distance / 10);
 
         return inflater.inflate(R.layout.fragment_payment_details_layout, container, false);
     }
@@ -64,10 +82,14 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         TextView distanceText = view.findViewById(R.id.tvDistanceData);
         distanceText.setText(String.valueOf(distance));
 
-        cost = round(10 + (distance / 1000), 2);
+        TextView carModelText = view.findViewById(R.id.tvCarModelData);
+        carModelText.setText(carModel);
 
-        TextView costText = view.findViewById(R.id.tvCostData);
-        costText.setText(String.valueOf(cost));
+        costText = view.findViewById(R.id.tvCostData);
+        costText.setText(String.valueOf(baseCost));
+
+        CheckBox useTravelPointsCheckBox = view.findViewById(R.id.cbUseTravelPoints);
+        useTravelPointsCheckBox.setOnCheckedChangeListener(this);
 
         Button payButton = view.findViewById(R.id.bPay);
         payButton.setOnClickListener(this);
@@ -104,7 +126,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                 String strNonce = paymentNonce.getNonce();
 
                 paramsHashmap = new HashMap<>();
-                paramsHashmap.put("amount", String.valueOf(cost));
+                paramsHashmap.put("amount", String.valueOf(discountedCost));
                 paramsHashmap.put("payment_method_nonce", strNonce);
 
                 sendPayment();
@@ -123,6 +145,22 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                     public void onResponse(String response) {
                         if (response.contains("Successful")) {
                             Toast.makeText(getActivity(), "Payment Completed", Toast.LENGTH_LONG).show();
+
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+                            FirebaseFirestore.getInstance()
+                                    .collection("points")
+                                    .document(user.getUid()).update("points", currentTravelPoints + travelPointsEarned)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            if (task.isSuccessful()) {
+                                                Toast.makeText(getActivity(), "Added your travel points",
+                                                        Toast.LENGTH_LONG).show();
+                                            }
+                                        }
+                                    });
+
                         }
                     }
                 },
@@ -156,5 +194,31 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         };
 
         requestQ.add(strRequest);
+    }
+
+    @Override
+    public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        if(isChecked) {
+            FirebaseFirestore.getInstance().collection("points")
+                    .whereEqualTo("userID", FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if(task.isSuccessful()) {
+                        if(!task.getResult().isEmpty()) {
+                            for (QueryDocumentSnapshot doc : task.getResult()) {
+                                currentTravelPoints = (int) doc.get("points");
+                            }
+                        }
+                    }
+                }
+            });
+
+            discountedCost = baseCost - Math.ceil(currentTravelPoints / 500);
+        } else {
+            discountedCost = baseCost;
+        }
+
+        costText.setText(String.valueOf(discountedCost));
     }
 }
