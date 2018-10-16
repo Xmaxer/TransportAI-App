@@ -13,13 +13,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 public class TravelPointsFragment extends Fragment {
 
-    TextView tvTotalPoints;
+    private TextView tvTotalPoints;
 
     @Nullable
     @Override
@@ -40,16 +39,12 @@ public class TravelPointsFragment extends Fragment {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore travelPointsDB = FirebaseFirestore.getInstance();
 
-        travelPointsDB.collection("points").whereEqualTo("userID", currentUser.getUid()).get()
-                .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot doc : task.getResult()) {
-                                tvTotalPoints.setText(doc.get("points").toString());
-                            }
-                        }
-                    }
-                });
+        travelPointsDB.collection("points").document(currentUser.getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                tvTotalPoints.setText(task.getResult().get("points").toString());
+            }
+        });
     }
 }
