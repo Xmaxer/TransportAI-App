@@ -22,6 +22,7 @@ import com.braintreepayments.api.dropin.DropInRequest;
 import com.braintreepayments.api.dropin.DropInResult;
 import com.braintreepayments.api.models.PaymentMethodNonce;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -63,13 +64,21 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         TextView distanceText = view.findViewById(R.id.tvDistanceData);
         distanceText.setText(String.valueOf(distance));
 
-        cost = 10 + (distance / 1000);
+        cost = round(10 + (distance / 1000), 2);
 
         TextView costText = view.findViewById(R.id.tvCostData);
         costText.setText(String.valueOf(cost));
 
         Button payButton = view.findViewById(R.id.bPay);
         payButton.setOnClickListener(this);
+    }
+
+    private double round(double value, int places) {
+
+        BigDecimal bd = new BigDecimal(Double.toString(value));
+        bd = bd.setScale(places, BigDecimal.ROUND_HALF_UP);
+
+        return bd.doubleValue();
     }
 
     @Override
