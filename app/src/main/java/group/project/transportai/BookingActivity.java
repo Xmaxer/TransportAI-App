@@ -26,10 +26,10 @@ public class BookingActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, BookingProcessCompleteListener,
         RouteSelectedListener, CarSelectedListener {
 
-    Fragment locationFragment, reviewFragment, travelPointsFragment, carSelectionFragment;
-    FragmentManager fragmentManager;
+    private Fragment locationFragment, reviewFragment, travelPointsFragment, carSelectionFragment;
+    private FragmentManager fragmentManager;
 
-    Button bPrevious, bNext;
+    private Button bPrevious, bNext;
 
     private static final int MAP_STAGE = 1;
     private static final int CAR_SELECT_STAGE = 2;
@@ -134,19 +134,19 @@ public class BookingActivity extends AppCompatActivity
             case R.id.nav_myReviews:
                 fragment = reviewFragment;
 
-                bPrevious.setVisibility(View.INVISIBLE);
+                bPrevious.setVisibility(View.GONE);
                 bPrevious.setClickable(false);
 
-                bNext.setVisibility(View.INVISIBLE);
+                bNext.setVisibility(View.GONE);
                 bNext.setClickable(false);
                 break;
             case R.id.nav_travelPoints:
                 fragment = travelPointsFragment;
 
-                bPrevious.setVisibility(View.INVISIBLE);
+                bPrevious.setVisibility(View.GONE);
                 bPrevious.setClickable(false);
 
-                bNext.setVisibility(View.INVISIBLE);
+                bNext.setVisibility(View.GONE);
                 bNext.setClickable(false);
                 break;
         }
@@ -215,6 +215,7 @@ public class BookingActivity extends AppCompatActivity
     @Override
     public void onBookingComplete() {
         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
+        bookingStage = MAP_STAGE;
     }
 
     @Override
