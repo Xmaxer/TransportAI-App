@@ -30,7 +30,6 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,7 +63,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         carModel = args.getString("CarModel");
         distance = args.getDouble("Distance");
 
-        baseCost = round(10 + (distance / 1000), 2);
+        baseCost = round(10 + (distance / 1000));
 
         travelPointsEarned = (int) Math.ceil(distance / 100);
 
@@ -97,12 +96,12 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         payButton.setOnClickListener(this);
     }
 
-    private double round(double value, int places) {
+    private double round(double value) {
 
-        BigDecimal bd = new BigDecimal(Double.toString(value));
-        bd = bd.setScale(places, BigDecimal.ROUND_HALF_UP);
+        String val = String.valueOf(value);
+        val = val.substring(0, 5);
 
-        return bd.doubleValue();
+        return Double.parseDouble(val);
     }
 
     @Override
@@ -177,7 +176,6 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        error.printStackTrace();
                         Toast.makeText(getActivity(), "Payment Failed", Toast.LENGTH_LONG).show();
                     }
                 }) {
@@ -227,6 +225,11 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
             discountedCost = baseCost;
             travelPointsUsed = false;
         }
+
+        if(discountedCost < 0) {
+            discountedCost = 0;
+        }
+
         costText.setText(String.valueOf(discountedCost));
     }
 }
