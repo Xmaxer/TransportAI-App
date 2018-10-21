@@ -30,6 +30,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,10 +99,10 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
     private double round(double value) {
 
-        String val = String.valueOf(value);
-        val = val.substring(0, 5);
+        BigDecimal bd = new BigDecimal(String.valueOf(value));
+        bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
 
-        return Double.parseDouble(val);
+        return bd.doubleValue();
     }
 
     @Override
