@@ -43,7 +43,14 @@ public class TravelPointsFragment extends Fragment {
                 .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                tvTotalPoints.setText(task.getResult().get("points").toString());
+
+                String points = task.getResult().get("points").toString();
+
+                if(points == null || points.equals("")) {
+                    tvTotalPoints.setText("0");
+                } else {
+                    tvTotalPoints.setText(task.getResult().get("points").toString());
+                }
             }
         });
     }
