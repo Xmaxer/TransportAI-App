@@ -37,4 +37,5 @@
     <string name="pay">Pay</string>
     <string name="car_model">Car Model</string>
     <string name="use_my_travel_points">Use my Travel Points</string>
+    <string name="track_my_car">Track My Car</string>
 </resources>
