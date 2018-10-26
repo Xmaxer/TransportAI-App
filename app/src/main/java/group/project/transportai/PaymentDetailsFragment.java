@@ -47,11 +47,9 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     private HashMap<String, String> paramsHashmap;
 
     private long currentTravelPoints;
-    private int travelPointsEarned;
+    private int travelPointsEarned, travelPointsUsed;
 
     private TextView costText;
-
-    private boolean travelPointsUsed = false;
 
     @Nullable
     @Override
@@ -151,24 +149,25 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                             FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
                             Map<String, Object> pointsMap = new HashMap<>();
-                            if (travelPointsUsed) {
+                            if (travelPointsUsed > 0) {
                                 pointsMap.put("points", travelPointsEarned);
                             } else {
                                 pointsMap.put("points", currentTravelPoints + travelPointsEarned);
                             }
 
-                            FirebaseFirestore.getInstance()
-                                    .collection("users")
-                                    .document(user.getUid()).set(pointsMap)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            if (task.isSuccessful()) {
-                                                Toast.makeText(getActivity(), "Added your travel points",
-                                                        Toast.LENGTH_LONG).show();
-                                            }
-                                        }
-                                    });
+                            Map<String, Object> updatePoints = new HashMap<>();
+                            updatePoints.put("points", currentTravelPoints - travelPointsUsed);
+
+                            FirebaseFirestore.getInstance().collection("users")
+                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .set(updatePoints).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful()) {
+                                        Toast.makeText(getActivity(), "Updated Travel Points", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
                         }
                     }
                 },
@@ -207,9 +206,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
         if (isChecked) {
 
-            travelPointsUsed = true;
-
-            FirebaseFirestore.getInstance().collection("points")
+            FirebaseFirestore.getInstance().collection("users")
                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
@@ -217,14 +214,18 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
                     if (task.isSuccessful()) {
                         currentTravelPoints = (long) task.getResult().get("points");
-                        discountedCost = Math.round(baseCost - currentTravelPoints / 500);
+
+                        int moneyOff = (int) currentTravelPoints / 20;
+                        travelPointsUsed = (int) currentTravelPoints / 20;
+
+                        discountedCost = Math.round(baseCost - moneyOff);
                     }
                 }
             });
 
         } else {
             discountedCost = baseCost;
-            travelPointsUsed = false;
+            travelPointsUsed = 0;
         }
 
         if(discountedCost < 0) {
