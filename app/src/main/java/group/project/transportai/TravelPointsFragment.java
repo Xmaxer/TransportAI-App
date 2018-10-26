@@ -22,12 +22,12 @@ public class TravelPointsFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_travel_points, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         tvTotalPoints = view.findViewById(R.id.tvTotalTravelPoints);
@@ -39,19 +39,26 @@ public class TravelPointsFragment extends Fragment {
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseFirestore travelPointsDB = FirebaseFirestore.getInstance();
 
-        travelPointsDB.collection("points").document(currentUser.getUid())
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+        if(currentUser != null) {
+            travelPointsDB.collection("users").document(currentUser.getUid())
+                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                String points = task.getResult().get("points").toString();
+                    Object points = task.getResult().get("points");
 
-                if(points == null || points.equals("")) {
-                    tvTotalPoints.setText("0");
-                } else {
-                    tvTotalPoints.setText(task.getResult().get("points").toString());
+                    if(points != null) {
+
+                        if (points.equals("")) {
+                            tvTotalPoints.setText("0");
+                        } else {
+                            tvTotalPoints.setText(points.toString());
+                        }
+                    } else {
+                        tvTotalPoints.setText("0");
+                    }
                 }
-            }
-        });
+            });
+        }
     }
 }
