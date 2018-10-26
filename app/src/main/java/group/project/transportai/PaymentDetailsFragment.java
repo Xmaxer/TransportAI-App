@@ -158,7 +158,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                             }
 
                             FirebaseFirestore.getInstance()
-                                    .collection("points")
+                                    .collection("users")
                                     .document(user.getUid()).set(pointsMap)
                                     .addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
