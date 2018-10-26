@@ -26,7 +26,9 @@ public class BookingActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, BookingProcessCompleteListener,
         RouteSelectedListener, CarSelectedListener {
 
-    private Fragment locationFragment, reviewFragment, travelPointsFragment, carSelectionFragment;
+    private DrawerLayout drawer;
+
+    private Fragment locationFragment, reviewFragment, travelPointsFragment, carSelectionFragment, trackCarFragment;
     private FragmentManager fragmentManager;
 
     private Button bPrevious, bNext;
@@ -56,7 +58,7 @@ public class BookingActivity extends AppCompatActivity
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
+        drawer = findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
@@ -71,6 +73,7 @@ public class BookingActivity extends AppCompatActivity
         reviewFragment = new ReviewsFragment();
         travelPointsFragment = new TravelPointsFragment();
         carSelectionFragment = new CarSelectionFragment();
+        trackCarFragment = new TrackCarFragment();
 
         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
 
@@ -89,7 +92,7 @@ public class BookingActivity extends AppCompatActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.booking, menu);
         return true;
     }
@@ -135,19 +138,19 @@ public class BookingActivity extends AppCompatActivity
                 fragment = reviewFragment;
 
                 bPrevious.setVisibility(View.GONE);
-                bPrevious.setClickable(false);
-
                 bNext.setVisibility(View.GONE);
-                bNext.setClickable(false);
                 break;
             case R.id.nav_travelPoints:
                 fragment = travelPointsFragment;
 
                 bPrevious.setVisibility(View.GONE);
-                bPrevious.setClickable(false);
-
                 bNext.setVisibility(View.GONE);
-                bNext.setClickable(false);
+                break;
+            case R.id.nav_trackCar:
+                fragment = trackCarFragment;
+
+                bPrevious.setVisibility(View.GONE);
+                bNext.setVisibility(View.GONE);
                 break;
         }
 
@@ -155,7 +158,6 @@ public class BookingActivity extends AppCompatActivity
             fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, fragment).commit();
         }
 
-        DrawerLayout drawer = findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
@@ -164,7 +166,7 @@ public class BookingActivity extends AppCompatActivity
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.bPrevious:
-                // TODO Move to previous fragment in booking process, make invisible and unclickable if going back to LocationFragment
+                // TODO Move to previous fragment in booking process, make invisible and un-clickable if going back to LocationFragment
 
                 if (bookingStage == CAR_SELECT_STAGE) {
                     bookingStage = MAP_STAGE;
