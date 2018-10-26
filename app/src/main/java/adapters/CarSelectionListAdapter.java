@@ -2,7 +2,6 @@ package adapters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,10 +39,17 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
 
                 if(task.isSuccessful()) {
                     for(QueryDocumentSnapshot document : task.getResult()) {
-                        Car car = new Car(document.get("model").toString());
+
+                        String make = document.get("make").toString();
+                        String model = document.get("model").toString();
+                        String regNo = document.getId();
+                        int status = Integer.parseInt(document.get("status").toString());
+
+                        Car car = new Car(make, model, regNo, status);
                         carList.add(car);
-                        notifyDataSetChanged();
                     }
+
+                    notifyDataSetChanged();
                 }
 
             }
@@ -62,7 +68,8 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
     @Override
     public void onBindViewHolder(@NonNull CarSelectionListAdapter.ViewHolder holder, int position) {
         Car car = carList.get(position);
-        holder.carModel.setText(car.getCarModel());
+        holder.carModel.setText(car.toString());
+        holder.carRegNo.setText(car.getRegNumber());
         holder.selected.setChecked(position == selectedItem);
     }
 
@@ -73,7 +80,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView carModel;
+        TextView carModel, carRegNo;
         RadioButton selected;
 
         ViewHolder(View itemView) {
@@ -84,12 +91,13 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
                 public void onClick(View v) {
                     selectedItem = getAdapterPosition();
                     notifyItemRangeChanged(0, carList.size());
-                    carSelectedListener.onCarSelected(carList.get(selectedItem).getCarModel());
+                    carSelectedListener.onCarSelected(carList.get(selectedItem).toString());
                 }
             };
 
             selected = itemView.findViewById(R.id.rbCarSelectButton);
             carModel = itemView.findViewById(R.id.tvCarModel);
+            carRegNo = itemView.findViewById(R.id.tvCarRegNo);
 
             selected.setOnClickListener(l);
             itemView.setOnClickListener(l);
