@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "628327064206",
+    "firebase_url": "https://transport-ai-1537358687680.firebaseio.com",
+    "project_id": "transport-ai-1537358687680",
+    "storage_bucket": "transport-ai-1537358687680.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:628327064206:android:6bc875f1fc5c9140",
+        "android_client_info": {
+          "package_name": "group.project.transportai"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "628327064206-ikv2qcqnabn8cgdtjoof9mv7eh43tmov.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "group.project.transportai",
+            "certificate_hash": "498d9232187b90f19a51ce113764656e67d42c5d"
+          }
+        },
+        {
+          "client_id": "628327064206-age6a61cfrfrkl1ej2k8huqtmu3t158g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDsE8vYrGsaSZeBeZm84HXMwv1LfeKyMXI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "628327064206-age6a61cfrfrkl1ej2k8huqtmu3t158g.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
