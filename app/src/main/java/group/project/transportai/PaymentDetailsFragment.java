@@ -54,11 +54,15 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     private long currentTravelPoints;
     private int travelPointsEarned, travelPointsUsed;
 
+    private CheckBox useTravelPointsCheckBox;
     private TextView costText;
+
+    private Context context;
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+        this.context = context;
         paymentCompletedListener = (PaymentCompletedListener) context;
     }
 
@@ -99,7 +103,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         costText = view.findViewById(R.id.tvCostData);
         costText.setText(String.valueOf(baseCost));
 
-        CheckBox useTravelPointsCheckBox = view.findViewById(R.id.cbUseTravelPoints);
+        useTravelPointsCheckBox = view.findViewById(R.id.cbUseTravelPoints);
         useTravelPointsCheckBox.setOnCheckedChangeListener(this);
 
         Button payButton = view.findViewById(R.id.bPay);
@@ -147,7 +151,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
     private void sendPayment() {
 
-        RequestQueue requestQ = Volley.newRequestQueue(getActivity());
+        RequestQueue requestQ = Volley.newRequestQueue(context);
 
         StringRequest strRequest = new StringRequest(Request.Method.POST, API_CHECKOUT,
                 new Response.Listener<String>() {
@@ -159,7 +163,12 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                             Toast.makeText(getActivity(), "Payment Completed", Toast.LENGTH_LONG).show();
 
                             Map<String, Object> updatePoints = new HashMap<>();
-                            updatePoints.put("points", currentTravelPoints - travelPointsUsed);
+
+                            if(useTravelPointsCheckBox.isChecked()) {
+                                updatePoints.put("points", currentTravelPoints - travelPointsUsed);
+                            } else {
+                                updatePoints.put("points", travelPointsEarned);
+                            }
 
                             FirebaseFirestore.getInstance().collection("users")
                                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
