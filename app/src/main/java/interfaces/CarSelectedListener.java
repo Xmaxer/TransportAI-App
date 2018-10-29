@@ -1,5 +1,5 @@
 package interfaces;
 
 public interface CarSelectedListener {
-    void onCarSelected(String carModel);
+    void onCarSelected(String carID, String carModel);
 }
