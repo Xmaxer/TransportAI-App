@@ -51,7 +51,7 @@ public class ReviewDialogFragment extends DialogFragment {
 
         dialog.setTitle("Leave Review").setView(view);
 
-        dialog.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
 
             @Override
             public void onClick(DialogInterface dialog, int which) {
@@ -69,13 +69,13 @@ public class ReviewDialogFragment extends DialogFragment {
                     }
                 });
                 dialog.dismiss();
-                Toast.makeText(getActivity(),"Thank you for your input!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),R.string.thankReviewInput, Toast.LENGTH_SHORT).show();
                 bookingCompleteListener.onBookingComplete();
 
             }
         });
 
-        dialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.cancel();

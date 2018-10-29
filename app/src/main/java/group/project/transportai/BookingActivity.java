@@ -198,7 +198,7 @@ public class BookingActivity extends AppCompatActivity
                         bPrevious.setVisibility(View.VISIBLE);
                         bPrevious.setClickable(true);
                     } else {
-                        Toast.makeText(this, "Please enter pickup point and destination", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.enterPickupDestination, Toast.LENGTH_SHORT).show();
                     }
                 } else if (bookingStage == CAR_SELECT_STAGE) {
                     if(carValid) {
@@ -216,14 +216,14 @@ public class BookingActivity extends AppCompatActivity
 
                         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, payDetailsFragment).commit();
                     } else {
-                        Toast.makeText(this, "Please choose a car", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.chooseCar, Toast.LENGTH_SHORT).show();
                     }
                 } else if (bookingStage == PAYMENT_STAGE) {
                     if(paymentMade) {
                         DialogFragment reviewDialog = new ReviewDialogFragment();
                         reviewDialog.show(fragmentManager, "ReviewDialog");
                     } else {
-                        Toast.makeText(this, "Please pay", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(this, R.string.pleasePay, Toast.LENGTH_SHORT).show();
                     }
                 }
                 break;

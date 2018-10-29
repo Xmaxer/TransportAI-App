@@ -160,7 +160,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                     public void onResponse(String response) {
                         if (response.contains("Successful")) {
                             paymentCompletedListener.onPaymentCompleted();
-                            Toast.makeText(getActivity(), "Payment Completed", Toast.LENGTH_LONG).show();
+                            Toast.makeText(getActivity(), R.string.paymentCompleted, Toast.LENGTH_LONG).show();
 
                             Map<String, Object> updatePoints = new HashMap<>();
 
@@ -176,7 +176,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if(task.isSuccessful()) {
-                                        Toast.makeText(getActivity(), "Updated Travel Points", Toast.LENGTH_LONG).show();
+                                        Toast.makeText(getActivity(), R.string.updatedTravelPoints, Toast.LENGTH_LONG).show();
                                     }
                                 }
                             });
@@ -190,7 +190,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getActivity(), "Payment Failed", Toast.LENGTH_LONG).show();
+                        Toast.makeText(getActivity(), R.string.paymentFailed, Toast.LENGTH_LONG).show();
                     }
                 }) {
             @Override
