@@ -16,15 +16,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.Toast;
+
 import com.google.firebase.auth.FirebaseAuth;
 
 import interfaces.BookingProcessCompleteListener;
 import interfaces.CarSelectedListener;
+import interfaces.PaymentCompletedListener;
 import interfaces.RouteSelectedListener;
 
 public class BookingActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, BookingProcessCompleteListener,
-        RouteSelectedListener, CarSelectedListener {
+        RouteSelectedListener, CarSelectedListener, PaymentCompletedListener {
 
     private DrawerLayout drawer;
 
@@ -41,6 +44,8 @@ public class BookingActivity extends AppCompatActivity
 
     private String origin, destination, carModel;
     private double distance;
+
+    private boolean routeValid, carValid, paymentMade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -185,30 +190,41 @@ public class BookingActivity extends AppCompatActivity
             case R.id.bNext:
                 // TODO Move forward to next fragment, make bPrevious visible and clickable to go back
                 if (bookingStage == MAP_STAGE) {
-                    bookingStage = CAR_SELECT_STAGE;
+                    if(routeValid) {
+                        bookingStage = CAR_SELECT_STAGE;
 
-                    fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, carSelectionFragment).commit();
+                        fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, carSelectionFragment).commit();
 
-                    bPrevious.setVisibility(View.VISIBLE);
-                    bPrevious.setClickable(true);
+                        bPrevious.setVisibility(View.VISIBLE);
+                        bPrevious.setClickable(true);
+                    } else {
+                        Toast.makeText(this, "Please enter pickup point and destination", Toast.LENGTH_SHORT).show();
+                    }
                 } else if (bookingStage == CAR_SELECT_STAGE) {
-                    bookingStage = PAYMENT_STAGE;
+                    if(carValid) {
+                        bookingStage = PAYMENT_STAGE;
 
-                    PaymentDetailsFragment payDetailsFragment = new PaymentDetailsFragment();
+                        PaymentDetailsFragment payDetailsFragment = new PaymentDetailsFragment();
 
-                    Bundle args = new Bundle();
-                    args.putString("Origin", origin);
-                    args.putString("Destination", destination);
-                    args.putString("CarModel", carModel);
-                    args.putDouble("Distance", distance);
+                        Bundle args = new Bundle();
+                        args.putString("Origin", origin);
+                        args.putString("Destination", destination);
+                        args.putString("CarModel", carModel);
+                        args.putDouble("Distance", distance);
 
-                    payDetailsFragment.setArguments(args);
+                        payDetailsFragment.setArguments(args);
 
-                    fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, payDetailsFragment).commit();
-
+                        fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, payDetailsFragment).commit();
+                    } else {
+                        Toast.makeText(this, "Please choose a car", Toast.LENGTH_SHORT).show();
+                    }
                 } else if (bookingStage == PAYMENT_STAGE) {
-                    DialogFragment reviewDialog = new ReviewDialogFragment();
-                    reviewDialog.show(fragmentManager, "ReviewDialog");
+                    if(paymentMade) {
+                        DialogFragment reviewDialog = new ReviewDialogFragment();
+                        reviewDialog.show(fragmentManager, "ReviewDialog");
+                    } else {
+                        Toast.makeText(this, "Please pay", Toast.LENGTH_SHORT).show();
+                    }
                 }
                 break;
         }
@@ -224,6 +240,7 @@ public class BookingActivity extends AppCompatActivity
     public void onRouteSelected(String origin, String destination) {
         this.origin = origin;
         this.destination = destination;
+        routeValid = true;
     }
 
     @Override
@@ -234,5 +251,11 @@ public class BookingActivity extends AppCompatActivity
     @Override
     public void onCarSelected(String carModel) {
         this.carModel = carModel;
+        carValid = true;
+    }
+
+    @Override
+    public void onPaymentCompleted() {
+        paymentMade = true;
     }
 }
