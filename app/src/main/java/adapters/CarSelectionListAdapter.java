@@ -69,7 +69,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
     public void onBindViewHolder(@NonNull CarSelectionListAdapter.ViewHolder holder, int position) {
         Car car = carList.get(position);
         holder.carModel.setText(car.toString());
-        holder.carRegNo.setText(car.getRegNumber());
+        holder.carRegNo.setText(car.getCarID());
         holder.selected.setChecked(position == selectedItem);
     }
 
@@ -91,7 +91,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
                 public void onClick(View v) {
                     selectedItem = getAdapterPosition();
                     notifyItemRangeChanged(0, carList.size());
-                    carSelectedListener.onCarSelected(carList.get(selectedItem).toString());
+                    carSelectedListener.onCarSelected(carList.get(selectedItem).getCarID(), carList.get(selectedItem).toString());
                 }
             };
 
