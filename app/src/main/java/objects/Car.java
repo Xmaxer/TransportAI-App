@@ -2,14 +2,14 @@ package objects;
 
 public class Car {
 
-    private String make, model, regNo;
+    private String make, model, carID;
     private int status;
 
-    public Car(String make, String model, String regNo, int status) {
+    public Car(String make, String model, String carID, int status) {
         this.make = make;
         this.model = model;
         this.status = status;
-        this.regNo = regNo;
+        this.carID = carID;
     }
 
     public String getMake() {
@@ -20,8 +20,8 @@ public class Car {
         return model;
     }
 
-    public String getRegNumber() {
-        return regNo;
+    public String getCarID() {
+        return carID;
     }
 
     public int getStatus() {
