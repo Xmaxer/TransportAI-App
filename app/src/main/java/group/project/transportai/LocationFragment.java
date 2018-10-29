@@ -321,7 +321,7 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
                 // Adding all the points in the route to LineOptions
                 lineOptions.addAll(points);
                 lineOptions.width(10);
-                lineOptions.color(Color.rgb(110, 14, 178));
+                lineOptions.color(R.color.routeColour);
             }
 
             // Drawing polyline in the Google Map for the i-th route
