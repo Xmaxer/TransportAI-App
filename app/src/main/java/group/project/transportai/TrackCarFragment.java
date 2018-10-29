@@ -28,18 +28,36 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
     private static GoogleMap map;
     private static Marker carMarker;
 
+    private boolean canTrack;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_track_car, container, false);
+
+        Bundle args = getArguments();
+
+        String carID = null;
+
+        if(args != null) {
+            carID = args.getString("carID");
+        }
+
+        if(carID != null && carID.length() > 0) {
+            canTrack = true;
+            return inflater.inflate(R.layout.fragment_track_car, container, false);
+        } else {
+            return inflater.inflate(R.layout.fragment_track_car_no_booking_layout, container, false);
+        }
     }
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        SupportMapFragment trackCarMap = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapTrackCar);
-        trackCarMap.getMapAsync(this);
+        if(canTrack) {
+            SupportMapFragment trackCarMap = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.mapTrackCar);
+            trackCarMap.getMapAsync(this);
+        }
     }
 
     @Override
