@@ -249,9 +249,14 @@ public class BookingActivity extends AppCompatActivity
     }
 
     @Override
-    public void onCarSelected(String carModel) {
+    public void onCarSelected(String carID, String carModel) {
         this.carModel = carModel;
         carValid = true;
+
+        Bundle args = new Bundle();
+        args.putString("carID", carID);
+
+        trackCarFragment.setArguments(args);
     }
 
     @Override
