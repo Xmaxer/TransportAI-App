@@ -1,10 +1,12 @@
 package group.project.transportai;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,13 +28,14 @@ import com.braintreepayments.api.models.PaymentMethodNonce;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
+
+import interfaces.PaymentCompletedListener;
 
 import static android.app.Activity.RESULT_OK;
 
@@ -42,6 +45,8 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     private double distance, discountedCost, baseCost;
     private static int PAYPAL_REQUEST_CODE = 2120;
 
+    private PaymentCompletedListener paymentCompletedListener;
+
     private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout";
 
     private HashMap<String, String> paramsHashmap;
@@ -50,6 +55,12 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     private int travelPointsEarned, travelPointsUsed;
 
     private TextView costText;
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        paymentCompletedListener = (PaymentCompletedListener) context;
+    }
 
     @Nullable
     @Override
@@ -144,16 +155,8 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                     @Override
                     public void onResponse(String response) {
                         if (response.contains("Successful")) {
+                            paymentCompletedListener.onPaymentCompleted();
                             Toast.makeText(getActivity(), "Payment Completed", Toast.LENGTH_LONG).show();
-
-                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-
-                            Map<String, Object> pointsMap = new HashMap<>();
-                            if (travelPointsUsed > 0) {
-                                pointsMap.put("points", travelPointsEarned);
-                            } else {
-                                pointsMap.put("points", currentTravelPoints + travelPointsEarned);
-                            }
 
                             Map<String, Object> updatePoints = new HashMap<>();
                             updatePoints.put("points", currentTravelPoints - travelPointsUsed);
@@ -168,6 +171,8 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                                     }
                                 }
                             });
+                        } else {
+                            Log.d("Payment", response);
                         }
                     }
                 },
