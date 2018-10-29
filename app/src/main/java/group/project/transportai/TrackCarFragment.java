@@ -18,10 +18,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
-import com.google.firebase.firestore.QuerySnapshot;
 
 public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
 
@@ -29,14 +29,13 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
     private static Marker carMarker;
 
     private boolean canTrack;
+    private static String carID;
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         Bundle args = getArguments();
-
-        String carID = null;
 
         if(args != null) {
             carID = args.getString("carID");
@@ -70,23 +69,22 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
 
     private static class GetCarLocation extends AsyncTask<Void, GeoPoint, Void> {
 
+        DocumentReference doc;
+
         @Override
         protected Void doInBackground(Void... voids) {
 
             while(true) {
 
-                FirebaseFirestore.getInstance().collection("cars").get().
-                        addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                doc = FirebaseFirestore.getInstance().collection("cars").document(carID);
 
+                doc.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                             @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                                if (task.isSuccessful()) {
-                                    DocumentSnapshot doc = task.getResult().getDocuments().get(0);
-
-                                    GeoPoint location = (GeoPoint) doc.get("location");
+                            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                                if(task.isSuccessful()) {
+                                    GeoPoint location = (GeoPoint) task.getResult().get("location");
 
                                     publishProgress(location);
-
                                 }
                             }
                         });
