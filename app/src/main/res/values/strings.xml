@@ -38,4 +38,5 @@
     <string name="car_model">Car Model</string>
     <string name="use_my_travel_points">Use my Travel Points</string>
     <string name="track_my_car">Track My Car</string>
+    <string name="you_must_have_a_car_booked_to_allow_for_tracking">You must have a car booked to allow for tracking</string>
 </resources>
