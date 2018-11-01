@@ -1,10 +1,12 @@
 package adapters;
 
+import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.TextView;
 
@@ -19,6 +21,7 @@ import java.util.ArrayList;
 import group.project.transportai.R;
 import interfaces.CarSelectedListener;
 import objects.Car;
+import objects.GlideApp;
 
 public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionListAdapter.ViewHolder> {
 
@@ -27,9 +30,12 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
 
     private CarSelectedListener carSelectedListener;
 
-    public CarSelectionListAdapter(CarSelectedListener carSelectedListener) {
+    private Context context;
+
+    public CarSelectionListAdapter(Context context, CarSelectedListener carSelectedListener) {
 
         this.carSelectedListener = carSelectedListener;
+        this.context = context;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
@@ -44,8 +50,9 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
                         String model = document.get("model").toString();
                         String regNo = document.getId();
                         int status = Integer.parseInt(document.get("status").toString());
+                        String imgURL = "transport-ai.com/cars/" + document.get("image");
 
-                        Car car = new Car(make, model, regNo, status);
+                        Car car = new Car(make, model, regNo, status, imgURL);
                         carList.add(car);
                     }
 
@@ -70,6 +77,11 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
         Car car = carList.get(position);
         holder.carModel.setText(car.toString());
         holder.carRegNo.setText(car.getCarID());
+
+        GlideApp.with(context).load(car.getImgURL()).override(96, 96)
+                .placeholder(R.mipmap.ardra_logo)
+                .fitCenter().into(holder.carImage);
+
         holder.selected.setChecked(position == selectedItem);
     }
 
@@ -82,6 +94,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
 
         TextView carModel, carRegNo;
         RadioButton selected;
+        ImageView carImage;
 
         ViewHolder(View itemView) {
             super(itemView);
@@ -98,6 +111,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
             selected = itemView.findViewById(R.id.rbCarSelectButton);
             carModel = itemView.findViewById(R.id.tvCarModel);
             carRegNo = itemView.findViewById(R.id.tvCarRegNo);
+            carImage = itemView.findViewById(R.id.ivCarImage);
 
             selected.setOnClickListener(l);
             itemView.setOnClickListener(l);
