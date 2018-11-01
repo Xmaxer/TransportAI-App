@@ -2,14 +2,15 @@ package objects;
 
 public class Car {
 
-    private String make, model, carID;
+    private String make, model, carID, carImgURL;
     private int status;
 
-    public Car(String make, String model, String carID, int status) {
+    public Car(String make, String model, String carID, int status, String carImgURL) {
         this.make = make;
         this.model = model;
         this.status = status;
         this.carID = carID;
+        this.carImgURL = carImgURL;
     }
 
     public String getMake() {
@@ -26,6 +27,10 @@ public class Car {
 
     public int getStatus() {
         return status;
+    }
+
+    public String getImgURL() {
+        return carImgURL;
     }
 
     @Override
