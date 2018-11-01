@@ -50,7 +50,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
                         String model = document.get("model").toString();
                         String regNo = document.getId();
                         int status = Integer.parseInt(document.get("status").toString());
-                        String imgURL = "transport-ai.com/cars/" + document.get("image");
+                        String imgURL = "http://www.transport-ai.com/cars/" + document.get("image").toString();
 
                         Car car = new Car(make, model, regNo, status, imgURL);
                         carList.add(car);
