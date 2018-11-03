@@ -50,7 +50,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
                         String model = document.get("model").toString();
                         String regNo = document.getId();
                         int status = Integer.parseInt(document.get("status").toString());
-                        String imgURL = "http://www.transport-ai.com/cars/" + document.get("image").toString();
+                        String imgURL = "http://ardra.s3.amazonaws.com/public/cars/" + document.get("image").toString();
 
                         Car car = new Car(make, model, regNo, status, imgURL);
                         carList.add(car);
@@ -79,7 +79,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
         holder.carRegNo.setText(car.getCarID());
 
         GlideApp.with(context).load(car.getImgURL()).override(96, 96)
-                .placeholder(R.mipmap.ardra_logo)
+                .placeholder(R.mipmap.default_car)
                 .fitCenter().into(holder.carImage);
 
         holder.selected.setChecked(position == selectedItem);
