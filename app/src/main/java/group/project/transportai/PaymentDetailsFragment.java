@@ -141,7 +141,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                 String strNonce = paymentNonce.getNonce();
 
                 paramsHashmap = new HashMap<>();
-                paramsHashmap.put("amount", String.valueOf(discountedCost));
+                paramsHashmap.put("amount", String.valueOf(baseCost));
                 paramsHashmap.put("payment_method_nonce", strNonce);
 
                 sendPayment();
@@ -158,7 +158,8 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
                     @Override
                     public void onResponse(String response) {
-                        if (response.contains("Successful")) {
+                        Log.d("Payment", response);
+                        if (response.contains("SuccessfulResult")) {
                             paymentCompletedListener.onPaymentCompleted();
                             Toast.makeText(getActivity(), R.string.paymentCompleted, Toast.LENGTH_LONG).show();
 
@@ -191,6 +192,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Toast.makeText(getActivity(), R.string.paymentFailed, Toast.LENGTH_LONG).show();
+                        error.printStackTrace();
                     }
                 }) {
             @Override
