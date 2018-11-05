@@ -4,11 +4,19 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NotificationCompat;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.iid.FirebaseInstanceId;
+import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import group.project.transportai.R;
@@ -18,6 +26,20 @@ public class TransportAICloudMessagingNotificationService extends FirebaseMessag
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);
+
+        FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
+            @Override
+            public void onComplete(@NonNull Task<InstanceIdResult> task) {
+                if(task.isSuccessful()) {
+                    Map<String, Object> tokenParams = new HashMap<>();
+                    tokenParams.put("messaging_token", task.getResult().getToken());
+
+                    FirebaseFirestore.getInstance().collection("users")
+                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                            .set(tokenParams);
+                }
+            }
+        });
     }
 
     @Override
