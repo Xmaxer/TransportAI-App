@@ -27,12 +27,13 @@ public class Main extends AppCompatActivity {
             finish();
         } else {
 
-            List<AuthUI.IdpConfig> signInProviders = Arrays.asList(new AuthUI.IdpConfig.EmailBuilder().build(),
+            List<AuthUI.IdpConfig> signInProviders = Arrays.asList(
+                    new AuthUI.IdpConfig.EmailBuilder().build(),
                     new AuthUI.IdpConfig.GoogleBuilder().build(),
                     new AuthUI.IdpConfig.TwitterBuilder().build(),
                     new AuthUI.IdpConfig.FacebookBuilder().setPermissions(Arrays.asList("email", "public_profile", "user_friends")).build());
 
-            startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder()
+            startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setLogo(R.mipmap.ardra_logo_round)
                     .setAvailableProviders(signInProviders).build(), SIGN_IN_REQUEST_CODE);
         }
     }
