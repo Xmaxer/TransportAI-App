@@ -50,7 +50,7 @@ public class CarSelectionFragment extends Fragment {
 
         rvCarSelectList.setItemAnimator(new DefaultItemAnimator());
 
-        CarSelectionListAdapter carListAdapter = new CarSelectionListAdapter(carSelectedListener);
+        CarSelectionListAdapter carListAdapter = new CarSelectionListAdapter(getContext(), carSelectedListener);
         rvCarSelectList.setAdapter(carListAdapter);
     }
 }

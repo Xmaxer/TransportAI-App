@@ -53,4 +53,6 @@
     <string name="thankReviewInput">Thank you for your input!</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="price_calculator">Price Calculator</string>
+    <string name="car_image">Car Image</string>
 </resources>
