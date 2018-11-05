@@ -19,6 +19,7 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.messaging.FirebaseMessaging;
 
 import interfaces.BookingProcessCompleteListener;
 import interfaces.CarSelectedListener;
@@ -51,6 +52,8 @@ public class BookingActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_booking);
+
+        FirebaseMessaging.getInstance().setAutoInitEnabled(true);
 
         bNext = findViewById(R.id.bNext);
         bNext.setOnClickListener(this);
