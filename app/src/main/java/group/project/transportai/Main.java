@@ -7,8 +7,6 @@ import android.os.Bundle;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.iid.FirebaseInstanceId;
-import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +31,7 @@ public class Main extends AppCompatActivity {
                     new AuthUI.IdpConfig.EmailBuilder().build(),
                     new AuthUI.IdpConfig.GoogleBuilder().build(),
                     new AuthUI.IdpConfig.TwitterBuilder().build(),
-                    new AuthUI.IdpConfig.FacebookBuilder().setPermissions(Arrays.asList("email", "public_profile", "user_friends")).build());
+                    new AuthUI.IdpConfig.FacebookBuilder().build());
 
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setLogo(R.mipmap.ardra_logo_round)
                     .setAvailableProviders(signInProviders).build(), SIGN_IN_REQUEST_CODE);
