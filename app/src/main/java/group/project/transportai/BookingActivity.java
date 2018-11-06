@@ -19,7 +19,11 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import interfaces.BookingProcessCompleteListener;
 import interfaces.CarSelectedListener;
@@ -54,6 +58,13 @@ public class BookingActivity extends AppCompatActivity
         setContentView(R.layout.activity_booking);
 
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
+
+        Map<String, Object> emailParams = new HashMap<>();
+        emailParams.put("email", FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(1).getEmail());
+
+        FirebaseFirestore.getInstance().collection("users")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .update(emailParams);
 
         bNext = findViewById(R.id.bNext);
         bNext.setOnClickListener(this);
