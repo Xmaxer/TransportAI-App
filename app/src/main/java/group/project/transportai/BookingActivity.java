@@ -95,6 +95,7 @@ public class BookingActivity extends AppCompatActivity
         trackCarFragment = new TrackCarFragment();
 
         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
+        setTitle(R.string.route);
 
         bookingStage = MAP_STAGE;
     }
@@ -151,6 +152,8 @@ public class BookingActivity extends AppCompatActivity
 
                 bNext.setVisibility(View.VISIBLE);
 
+                setTitle(R.string.route);
+
                 bookingStage = MAP_STAGE;
                 break;
             case R.id.nav_myReviews:
@@ -158,18 +161,27 @@ public class BookingActivity extends AppCompatActivity
 
                 bPrevious.setVisibility(View.GONE);
                 bNext.setVisibility(View.GONE);
+
+                setTitle(R.string.my_reviews);
+
                 break;
             case R.id.nav_travelPoints:
                 fragment = travelPointsFragment;
 
                 bPrevious.setVisibility(View.GONE);
                 bNext.setVisibility(View.GONE);
+
+                setTitle(R.string.travel_points);
+
                 break;
             case R.id.nav_trackCar:
                 fragment = trackCarFragment;
 
                 bPrevious.setVisibility(View.GONE);
                 bNext.setVisibility(View.GONE);
+
+                setTitle(R.string.track_my_car);
+
                 break;
         }
 
@@ -194,10 +206,15 @@ public class BookingActivity extends AppCompatActivity
 
                     bPrevious.setVisibility(View.INVISIBLE);
                     bPrevious.setClickable(false);
+
+                    setTitle(R.string.route);
+
                 } else if (bookingStage == PAYMENT_STAGE) {
                     bookingStage = CAR_SELECT_STAGE;
 
                     fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, carSelectionFragment).commit();
+
+                    setTitle(R.string.select_car);
                 }
 
                 break;
@@ -211,6 +228,7 @@ public class BookingActivity extends AppCompatActivity
 
                         bPrevious.setVisibility(View.VISIBLE);
                         bPrevious.setClickable(true);
+                        setTitle(R.string.select_car);
                     } else {
                         Toast.makeText(this, R.string.enterPickupDestination, Toast.LENGTH_SHORT).show();
                     }
@@ -229,6 +247,7 @@ public class BookingActivity extends AppCompatActivity
                         payDetailsFragment.setArguments(args);
 
                         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, payDetailsFragment).commit();
+                        setTitle(R.string.make_payment);
                     } else {
                         Toast.makeText(this, R.string.chooseCar, Toast.LENGTH_SHORT).show();
                     }
@@ -248,6 +267,7 @@ public class BookingActivity extends AppCompatActivity
     public void onBookingComplete() {
         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
         bookingStage = MAP_STAGE;
+        setTitle(R.string.route);
     }
 
     @Override
