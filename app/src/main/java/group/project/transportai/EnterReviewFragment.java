@@ -26,7 +26,7 @@ import java.util.Map;
 
 import interfaces.BookingProcessCompleteListener;
 
-public class ReviewDialogFragment extends Fragment implements View.OnClickListener {
+public class EnterReviewFragment extends Fragment implements View.OnClickListener {
 
     private BookingProcessCompleteListener bookingCompleteListener;
 
