@@ -94,7 +94,7 @@ public class BookingActivity extends AppCompatActivity
         travelPointsFragment = new TravelPointsFragment();
         carSelectionFragment = new CarSelectionFragment();
         trackCarFragment = new TrackCarFragment();
-        enterReviewFragment = new ReviewDialogFragment();
+        enterReviewFragment = new EnterReviewFragment();
 
         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
         setTitle(R.string.route);
