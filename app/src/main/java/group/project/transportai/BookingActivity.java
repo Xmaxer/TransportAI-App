@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -36,7 +35,8 @@ public class BookingActivity extends AppCompatActivity
 
     private DrawerLayout drawer;
 
-    private Fragment locationFragment, reviewFragment, travelPointsFragment, carSelectionFragment, trackCarFragment;
+    private Fragment locationFragment, myReviewsFragment, travelPointsFragment,
+            carSelectionFragment, trackCarFragment, enterReviewFragment;
     private FragmentManager fragmentManager;
 
     private Button bPrevious, bNext;
@@ -44,13 +44,14 @@ public class BookingActivity extends AppCompatActivity
     private static final int MAP_STAGE = 1;
     private static final int CAR_SELECT_STAGE = 2;
     private static final int PAYMENT_STAGE = 3;
+    private static final int REVIEW_STAGE = 5;
 
     private int bookingStage;
 
     private String origin, destination, carModel;
     private double distance;
 
-    private boolean routeValid, carValid, paymentMade;
+    private boolean routeValid, carValid, paymentMade, reviewValid;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,10 +90,11 @@ public class BookingActivity extends AppCompatActivity
         fragmentManager = getSupportFragmentManager();
 
         locationFragment = new LocationFragment();
-        reviewFragment = new ReviewsFragment();
+        myReviewsFragment = new ReviewsFragment();
         travelPointsFragment = new TravelPointsFragment();
         carSelectionFragment = new CarSelectionFragment();
         trackCarFragment = new TrackCarFragment();
+        enterReviewFragment = new ReviewDialogFragment();
 
         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
         setTitle(R.string.route);
@@ -157,7 +159,7 @@ public class BookingActivity extends AppCompatActivity
                 bookingStage = MAP_STAGE;
                 break;
             case R.id.nav_myReviews:
-                fragment = reviewFragment;
+                fragment = myReviewsFragment;
 
                 bPrevious.setVisibility(View.GONE);
                 bNext.setVisibility(View.GONE);
@@ -253,8 +255,8 @@ public class BookingActivity extends AppCompatActivity
                     }
                 } else if (bookingStage == PAYMENT_STAGE) {
                     if(paymentMade) {
-                        DialogFragment reviewDialog = new ReviewDialogFragment();
-                        reviewDialog.show(fragmentManager, "ReviewDialog");
+                        bookingStage = REVIEW_STAGE;
+                        fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, enterReviewFragment).commit();
                     } else {
                         Toast.makeText(this, R.string.pleasePay, Toast.LENGTH_SHORT).show();
                     }
@@ -291,6 +293,7 @@ public class BookingActivity extends AppCompatActivity
         args.putString("carID", carID);
 
         trackCarFragment.setArguments(args);
+        enterReviewFragment.setArguments(args);
     }
 
     @Override
