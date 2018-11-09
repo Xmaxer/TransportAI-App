@@ -17,6 +17,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -51,7 +52,9 @@ public class BookingActivity extends AppCompatActivity
     private String origin, destination, carModel;
     private double distance;
 
-    private boolean routeValid, carValid, paymentMade, reviewValid;
+    private LatLng originCoords, destCoords;
+
+    private boolean routeValid, carValid, paymentMade;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -273,10 +276,13 @@ public class BookingActivity extends AppCompatActivity
     }
 
     @Override
-    public void onRouteSelected(String origin, String destination) {
+    public void onRouteSelected(String origin, String destination, LatLng originCoords, LatLng destCoords) {
         this.origin = origin;
         this.destination = destination;
         routeValid = true;
+
+        this.originCoords = originCoords;
+        this.destCoords = destCoords;
     }
 
     @Override
@@ -291,6 +297,10 @@ public class BookingActivity extends AppCompatActivity
 
         Bundle args = new Bundle();
         args.putString("carID", carID);
+        args.putDouble("originLatitude", originCoords.latitude);
+        args.putDouble("originLongitude", originCoords.longitude);
+        args.putDouble("destLatitude", destCoords.latitude);
+        args.putDouble("destLongitude", destCoords.longitude);
 
         trackCarFragment.setArguments(args);
         enterReviewFragment.setArguments(args);
