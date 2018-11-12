@@ -1,5 +1,7 @@
 package objects;
 
+import android.util.Log;
+
 import com.google.android.gms.maps.model.LatLng;
 
 import org.json.JSONArray;
@@ -16,6 +18,7 @@ public class DirectionsJSONParser {
 
     public DirectionsJSONParser(JSONObject jObject) {
         this.jObject = jObject;
+        Log.d("JSON File", jObject.toString());
     }
 
     /**
@@ -101,7 +104,8 @@ public class DirectionsJSONParser {
 
     public Double getDistance() {
 
-        JSONArray jArray = null;
+        JSONArray jArray;
+
         try {
             jArray = jObject.getJSONArray("routes");
 
@@ -117,5 +121,26 @@ public class DirectionsJSONParser {
         }
 
         return null;
+    }
+
+    public int getTime() {
+
+        JSONArray array;
+
+        try {
+            array = jObject.getJSONArray("routes");
+
+            JSONObject routes = array.getJSONObject(0);
+
+            JSONArray legsArray = routes.getJSONArray("legs");
+
+            JSONObject timeObject = legsArray.getJSONObject(0).getJSONObject("duration");
+
+            return Integer.parseInt(timeObject.getString("value"));
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return 0;
     }
 }
