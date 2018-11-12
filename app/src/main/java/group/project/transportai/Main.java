@@ -11,9 +11,6 @@ import com.google.firebase.auth.FirebaseUser;
 import java.util.Arrays;
 import java.util.List;
 
-import static group.project.transportai.R.style.AppTheme;
-import static group.project.transportai.R.style.Theme_AppCompat_Light_DarkActionBar;
-
 public class Main extends AppCompatActivity {
 
     private static final int SIGN_IN_REQUEST_CODE = 1100;
@@ -21,7 +18,7 @@ public class Main extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main2);
 
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -36,7 +33,7 @@ public class Main extends AppCompatActivity {
                     new AuthUI.IdpConfig.TwitterBuilder().build(),
                     new AuthUI.IdpConfig.FacebookBuilder().build());
 
-            startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setLogo(R.mipmap.ardra_logo_round).setTheme(AppTheme)
+            startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setLogo(R.mipmap.ardra_logo_round)
                     .setAvailableProviders(signInProviders).build(), SIGN_IN_REQUEST_CODE);
         }
     }
