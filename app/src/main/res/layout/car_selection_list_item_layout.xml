@@ -18,6 +18,7 @@
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/ivCarImage"
         android:layout_centerVertical="true"
+        android:textColor="#ffffff"
         android:padding="12dp"
         android:textSize="18sp" />
 
@@ -25,6 +26,7 @@
         android:id="@+id/tvCarRegNo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:textColor="#ffffff"
         android:layout_toEndOf="@id/ivCarImage"
         android:layout_below="@id/tvCarModel"
         android:padding="12dp"

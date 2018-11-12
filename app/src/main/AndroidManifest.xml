@@ -16,7 +16,8 @@
         android:roundIcon="@mipmap/ardra_logo_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Main">
+        <activity android:name=".Main"
+            android:theme="@style/FirebaseUI.AuthMethodPicker.Logo">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

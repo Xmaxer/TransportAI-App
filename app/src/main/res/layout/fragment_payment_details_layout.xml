@@ -1,92 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/origin"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:id="@+id/tvOriginData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/destination"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvOriginData" />
-
-    <TextView
-        android:id="@+id/tvDestinationData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvOriginData" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/distance"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvDestinationData" />
-
-    <TextView
-        android:id="@+id/tvDistanceData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvDestinationData" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/car_model"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvDistanceData" />
-
-    <TextView
-        android:id="@+id/tvCarModelData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvDistanceData" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/cost"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvCarModelData" />
-
-    <TextView
-        android:id="@+id/tvCostData"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tvCarModelData" />
-
-    <CheckBox
-        android:id="@+id/cbUseTravelPoints"
-        android:text="@string/use_my_travel_points"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toTopOf="@id/bPay"/>
 
     <Button
         android:id="@+id/bPay"
-        android:layout_width="match_parent"
+        android:layout_width="283dp"
         android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="50dp"
+        android:background="@drawable/button_bg_rounded_corners"
         android:text="@string/pay"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        android:textAllCaps="true"
+        android:textColor="#ffffff"
+        android:textSize="18dp"
+        android:textStyle="bold"
+        android:drawableLeft="@drawable/euro"/>
 
-</android.support.constraint.ConstraintLayout>
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="25dp"
+        android:text="@string/payment"
+        android:textColor="#ffffff"
+        android:textSize="40dp"/>
+
+    <TextView
+        android:id="@+id/tvCostData"
+        android:layout_width="136dp"
+        android:layout_height="52dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="113dp"
+        android:layout_marginEnd="117dp"
+        android:textColor="#ffffff"
+        android:drawableLeft="@drawable/euro"
+        android:textSize="36sp" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="224dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginTop="177dp"
+        android:background="#f2f2f2">
+
+
+        <TableRow>
+
+            <TextView
+                android:id="@+id/origin"
+                android:layout_width="174dp"
+                android:layout_height="match_parent"
+                android:gravity="left"
+                android:padding="10dp"
+                android:text="@string/origin"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvOriginData"
+                android:layout_width="196dp"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="174dp"
+                android:layout_height="match_parent"
+                android:gravity="left"
+                android:padding="10dp"
+                android:text="@string/destination"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDestinationData"
+                android:layout_width="196dp"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="174dp"
+                android:layout_height="match_parent"
+                android:gravity="left"
+                android:padding="10dp"
+                android:text="@string/distance"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvDistanceData"
+                android:layout_width="196dp"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+        </TableRow>
+
+        <TableRow>
+
+            <TextView
+                android:layout_width="174dp"
+                android:layout_height="match_parent"
+                android:gravity="left"
+                android:padding="10dp"
+                android:text="@string/car_model"
+                android:textColor="#000000"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tvCarModelData"
+                android:layout_width="196dp"
+                android:layout_height="match_parent"
+                android:padding="10dp"
+                android:textColor="#000000"
+                android:textSize="24sp" />
+        </TableRow>
+
+    </TableLayout>
+
+    <CheckBox
+        android:id="@+id/cbUseTravelPoints"
+        android:layout_width="187dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_marginEnd="-31dp"
+        android:layout_marginBottom="150dp"
+        android:layout_toStartOf="@+id/tvCostData"
+        android:text="@string/use_my_travel_points"
+        android:textColor="#ffffff"
+        android:textStyle="bold" />
+
+
+</RelativeLayout>

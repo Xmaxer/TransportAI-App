@@ -3,9 +3,15 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/bt_color_primary_dark</item>
+        <item name="colorPrimaryDark">@color/bt_very_light_gray</item>
+        <item name="colorAccent">@color/routeColour</item>
+        <item name="android:colorBackground">@color/background_material_light</item>
+        <item name="android:colorForeground">@color/foreground_material_light</item>
+        <item name="android:textColorPrimary">@color/text_color_primary</item>
+        <item name="android:textColorSecondary">@color/text_color_secondary</item>
+        <item name="android:statusBarColor">@color/routeColour</item>
+        <item name="android:windowBackground">@drawable/s8</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
@@ -16,5 +22,17 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="FirebaseUI.AuthMethodPicker.Logo">
+        <item name="android:layout_width">275dp</item>
+        <item name="android:layout_height">225dp</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:padding">24dp</item>
+    </style>
+
+    <style name="TransportAi" parent="AppTheme" >
+        <item name="colorAccent">@color/bt_blue_pressed</item>
+        <item name="colorPrimary">@color/browser_actions_text_color</item>
+    </style>
 
 </resources>
