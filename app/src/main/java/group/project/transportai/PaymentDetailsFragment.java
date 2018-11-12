@@ -95,7 +95,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         destText.setText(destination);
 
         TextView distanceText = view.findViewById(R.id.tvDistanceData);
-        distanceText.setText(String.valueOf(distance));
+        distanceText.setText(String.valueOf(distance / 1000));
 
         TextView carModelText = view.findViewById(R.id.tvCarModelData);
         carModelText.setText(carModel);

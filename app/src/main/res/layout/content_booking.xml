@@ -30,6 +30,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/back"
+            android:background="#d4d4aa"
+            android:textColor="#000"
             style="?android:buttonBarButtonStyle"/>
 
         <Button
@@ -38,6 +40,8 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/next"
+            android:background="#d4d4aa"
+            android:textColor="#000"
             style="?android:buttonBarButtonStyle"/>
 
     </LinearLayout>
