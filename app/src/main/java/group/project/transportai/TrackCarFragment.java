@@ -23,6 +23,8 @@ import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
 
+import utils.MapUtils;
+
 public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
 
     private static GoogleMap map;
@@ -30,6 +32,8 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
 
     private boolean canTrack;
     private static String carID;
+
+    private static LatLng origin, dest;
 
     @Nullable
     @Override
@@ -42,6 +46,10 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
         }
 
         if(carID != null && carID.length() > 0) {
+
+            origin = new LatLng(args.getDouble("originLatitude"), args.getDouble("originLongitude"));
+            dest = new LatLng(args.getDouble("destLatitude"), args.getDouble("destLongitude"));
+
             canTrack = true;
             return inflater.inflate(R.layout.fragment_track_car, container, false);
         } else {
@@ -64,12 +72,19 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
         map = googleMap;
         map.setMinZoomPreference(2.0f);
 
-        new GetCarLocation().execute();
+        new GetCarLocation().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private static class GetCarLocation extends AsyncTask<Void, GeoPoint, Void> {
 
         DocumentReference doc;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            MapUtils mapUtils = new MapUtils(map);
+            mapUtils.drawRoute(origin, dest);
+        }
 
         @Override
         protected Void doInBackground(Void... voids) {
@@ -90,7 +105,7 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
                         });
 
                 try {
-                    Thread.sleep(10000);
+                    Thread.sleep(20000);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -112,7 +127,6 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
 
             carMarker = map.addMarker(new MarkerOptions().position(latLng).title("Car Location"));
             map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-            map.animateCamera(CameraUpdateFactory.zoomTo(16.0f));
         }
     }
 }

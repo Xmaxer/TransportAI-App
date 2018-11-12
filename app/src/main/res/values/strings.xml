@@ -56,4 +56,10 @@
     <string name="cancel">Cancel</string>
     <string name="price_calculator">Price Calculator</string>
     <string name="car_image">Car Image</string>
+    <string name="route">Route</string>
+    <string name="select_car"> Select Car</string>
+    <string name="make_payment">Make Payment</string>
+    <string name="post_review">Post Review</string>
+    <string name="please_enter_review">Enter a rating and comment to leave a review</string>
+    <string name="error_posting_review">Error Posting Review</string>
 </resources>

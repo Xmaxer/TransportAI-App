@@ -34,7 +34,7 @@ public class Main extends AppCompatActivity {
                     new AuthUI.IdpConfig.EmailBuilder().build(),
                     new AuthUI.IdpConfig.GoogleBuilder().build(),
                     new AuthUI.IdpConfig.TwitterBuilder().build(),
-                    new AuthUI.IdpConfig.FacebookBuilder().setPermissions(Arrays.asList("email", "public_profile", "user_friends")).build());
+                    new AuthUI.IdpConfig.FacebookBuilder().build());
 
             startActivityForResult(AuthUI.getInstance().createSignInIntentBuilder().setLogo(R.mipmap.ardra_logo_round).setTheme(AppTheme)
                     .setAvailableProviders(signInProviders).build(), SIGN_IN_REQUEST_CODE);
