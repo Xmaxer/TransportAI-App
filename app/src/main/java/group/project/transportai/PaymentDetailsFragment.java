@@ -106,7 +106,10 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         carModelText.setText(carModel);
 
         costText = view.findViewById(R.id.tvCostData);
-        costText.setText(String.valueOf(baseCost));
+        if(baseCost == 0)
+            costText.setText("Calculating...");
+        else
+            costText.setText(String.valueOf(baseCost));
 
         useTravelPointsCheckBox = view.findViewById(R.id.cbUseTravelPoints);
         useTravelPointsCheckBox.setOnCheckedChangeListener(this);
