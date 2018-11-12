@@ -27,15 +27,13 @@ import com.braintreepayments.api.dropin.DropInResult;
 import com.braintreepayments.api.models.PaymentMethodNonce;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.math.BigDecimal;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -53,6 +51,8 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
     private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout",
     API_CALCULATE_PRICE = "http://www.transport-ai.com/requests/calculate_price";
+
+    private String strNonce, amount;
 
     private HashMap<String, String> paramsHashmap;
 
@@ -81,8 +81,9 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         destination = args.getString("Destination");
         carModel = args.getString("CarModel");
         distance = args.getDouble("Distance");
+        int time = args.getInt("Time");
 
-        calculateCost(distance/1000, 0);//baseCost = calculateCost(distance/1000, 0); //round(10 + (distance / 1000));
+        calculateCost(distance/1000, time);//baseCost = calculateCost(distance/1000, 0); //round(10 + (distance / 1000));
 
         travelPointsEarned = (int) Math.ceil(distance / 100);
 
@@ -121,6 +122,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     private void updateBaseCost(double i){
         costText.setText(String.valueOf(i));
     }
+
     private void calculateCost(final double distance, final int time) {
         RequestQueue requestQ = Volley.newRequestQueue(context);
 
@@ -131,7 +133,8 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                     public void onResponse(String response) {
                         double result = 0;
                         try {
-                            result = Double.valueOf(response);
+                            result = round(response);
+                            amount = String.valueOf(result);
                         } catch (NumberFormatException e) {
                             e.printStackTrace();
                         }
@@ -158,11 +161,10 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
         requestQ.add(strRequest);
     }
-    private double round(double value) {
 
-        BigDecimal bd = new BigDecimal(String.valueOf(value));
+    private double round(String cost) {
+        BigDecimal bd = new BigDecimal(cost);
         bd = bd.setScale(2, BigDecimal.ROUND_HALF_UP);
-
         return bd.doubleValue();
     }
 
@@ -186,10 +188,10 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                 DropInResult dropInResult = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
                 PaymentMethodNonce paymentNonce = dropInResult.getPaymentMethodNonce();
 
-                String strNonce = paymentNonce.getNonce();
+                strNonce = paymentNonce.getNonce();
 
                 paramsHashmap = new HashMap<>();
-                paramsHashmap.put("amount", String.valueOf(baseCost));
+                paramsHashmap.put("amount", amount);
                 paramsHashmap.put("payment_method_nonce", strNonce);
 
                 sendPayment();
@@ -229,6 +231,18 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                                     }
                                 }
                             });
+
+                            Map<String, Object> transactionParams = new HashMap<>();
+                            transactionParams.put("amount", amount);
+                            transactionParams.put("created_At", new Timestamp(new Date()));
+                            transactionParams.put("payment_method", strNonce);
+                            transactionParams.put("points_used", travelPointsUsed);
+
+                            FirebaseFirestore.getInstance().collection("users")
+                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .collection("transactions")
+                                    .add(transactionParams);
+
                         } else {
                             Log.d("Payment", response);
                         }
