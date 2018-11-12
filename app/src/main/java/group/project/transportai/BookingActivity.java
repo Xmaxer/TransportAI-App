@@ -51,6 +51,7 @@ public class BookingActivity extends AppCompatActivity
 
     private String origin, destination, carModel;
     private double distance;
+    private int time;
 
     private LatLng originCoords, destCoords;
 
@@ -248,6 +249,7 @@ public class BookingActivity extends AppCompatActivity
                         args.putString("Destination", destination);
                         args.putString("CarModel", carModel);
                         args.putDouble("Distance", distance);
+                        args.putInt("Time", time);
 
                         payDetailsFragment.setArguments(args);
 
@@ -286,8 +288,9 @@ public class BookingActivity extends AppCompatActivity
     }
 
     @Override
-    public void onDistanceCalculated(double distance) {
+    public void onJourneyCalculated(double distance, int time) {
         this.distance = distance;
+        this.time = time;
     }
 
     @Override

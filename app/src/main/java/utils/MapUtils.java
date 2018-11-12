@@ -163,9 +163,10 @@ public class MapUtils {
                 // Starts parsing data
                 routes = parser.parseRouteData();
                 double dist = parser.getDistance();
+                int time = parser.getTime();
 
                 if(routeSelectedListener != null) {
-                    routeSelectedListener.onDistanceCalculated(dist);
+                    routeSelectedListener.onJourneyCalculated(dist, time);
                 }
 
             }catch(Exception e){
