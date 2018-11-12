@@ -31,7 +31,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,10 +48,11 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     private String origin, destination, carModel;
     private double distance, discountedCost, baseCost;
     private static int PAYPAL_REQUEST_CODE = 2120;
-
+    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393";
     private PaymentCompletedListener paymentCompletedListener;
 
-    private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout";
+    private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout",
+    API_CALCULATE_PRICE = "http://www.transport-ai.com/requests/calculate_price";
 
     private HashMap<String, String> paramsHashmap;
 
@@ -77,7 +82,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         carModel = args.getString("CarModel");
         distance = args.getDouble("Distance");
 
-        baseCost = round(10 + (distance / 1000));
+        calculateCost(distance/1000, 0);//baseCost = calculateCost(distance/1000, 0); //round(10 + (distance / 1000));
 
         travelPointsEarned = (int) Math.ceil(distance / 100);
 
@@ -110,6 +115,46 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         payButton.setOnClickListener(this);
     }
 
+    private void updateBaseCost(double i){
+        costText.setText(String.valueOf(i));
+    }
+    private void calculateCost(final double distance, final int time) {
+        RequestQueue requestQ = Volley.newRequestQueue(context);
+
+        StringRequest strRequest = new StringRequest(Request.Method.GET, API_CALCULATE_PRICE + "?distance=" + distance + "&time=" + time,
+                new Response.Listener<String>() {
+
+                    @Override
+                    public void onResponse(String response) {
+                        double result = 0;
+                        try {
+                            result = Double.valueOf(response);
+                        } catch (NumberFormatException e) {
+                            e.printStackTrace();
+                        }
+                        updateBaseCost(result);
+                    }
+                },
+
+                new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getActivity(), R.string.error_calculating_price, Toast.LENGTH_LONG).show();
+                        error.printStackTrace();
+                    }
+                }) {
+
+            @Override
+            public Map<String, String> getHeaders() {
+                Map<String, String> headerParams = new HashMap<>();
+                headerParams.put("USER-AGENT", USER_AGENT);
+                return headerParams;
+            }
+        };
+
+        requestQ.add(strRequest);
+    }
     private double round(double value) {
 
         BigDecimal bd = new BigDecimal(String.valueOf(value));
