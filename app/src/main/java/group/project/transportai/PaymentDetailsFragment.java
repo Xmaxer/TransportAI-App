@@ -29,6 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -234,14 +235,22 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
                             Map<String, Object> transactionParams = new HashMap<>();
                             transactionParams.put("amount", amount);
-                            transactionParams.put("created_At", new Timestamp(new Date()));
+                            transactionParams.put("created_at", new Timestamp(new Date()));
                             transactionParams.put("payment_method", strNonce);
                             transactionParams.put("points_used", travelPointsUsed);
 
                             FirebaseFirestore.getInstance().collection("users")
                                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .collection("transactions")
-                                    .add(transactionParams);
+                                    .add(transactionParams).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                    if(!task.isSuccessful()) {
+                                        Toast.makeText(getContext(),
+                                                "Error sending bill amount to server", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
 
                         } else {
                             Log.d("Payment", response);
