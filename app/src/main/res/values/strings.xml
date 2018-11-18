@@ -63,4 +63,5 @@
     <string name="please_enter_review">Enter a rating and comment to leave a review</string>
     <string name="error_posting_review">Error Posting Review</string>
     <string name="error_calculating_price">Error calculating price</string>
+    <string name="my_transactions">My transactions</string>
 </resources>

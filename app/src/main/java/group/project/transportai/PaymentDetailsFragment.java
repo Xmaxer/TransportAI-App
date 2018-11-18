@@ -29,6 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -44,13 +45,13 @@ import static android.app.Activity.RESULT_OK;
 public class PaymentDetailsFragment extends Fragment implements View.OnClickListener, CompoundButton.OnCheckedChangeListener {
 
     private String origin, destination, carModel;
-    private double distance, discountedCost, baseCost;
+    private double distance, discountedCost;
     private static int PAYPAL_REQUEST_CODE = 2120;
     private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 6.3; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.79 Safari/537.36 Edge/14.14393";
     private PaymentCompletedListener paymentCompletedListener;
 
     private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout",
-    API_CALCULATE_PRICE = "http://www.transport-ai.com/requests/calculate_price";
+            API_CALCULATE_PRICE = "http://www.transport-ai.com/requests/calculate_price";
 
     private String strNonce, amount;
 
@@ -83,7 +84,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         distance = args.getDouble("Distance");
         int time = args.getInt("Time");
 
-        calculateCost(distance/1000, time);//baseCost = calculateCost(distance/1000, 0); //round(10 + (distance / 1000));
+        calculateCost(distance / 1000, time);//baseCost = calculateCost(distance/1000, 0); //round(10 + (distance / 1000));
 
         travelPointsEarned = (int) Math.ceil(distance / 100);
 
@@ -107,10 +108,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         carModelText.setText(carModel);
 
         costText = view.findViewById(R.id.tvCostData);
-        if(baseCost == 0)
-            costText.setText("Calculating...");
-        else
-            costText.setText(String.valueOf(baseCost));
+        costText.setText("Calculating...");
 
         useTravelPointsCheckBox = view.findViewById(R.id.cbUseTravelPoints);
         useTravelPointsCheckBox.setOnCheckedChangeListener(this);
@@ -119,7 +117,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         payButton.setOnClickListener(this);
     }
 
-    private void updateBaseCost(double i){
+    private void updateBaseCost(double i) {
         costText.setText(String.valueOf(i));
     }
 
@@ -215,7 +213,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
                             Map<String, Object> updatePoints = new HashMap<>();
 
-                            if(useTravelPointsCheckBox.isChecked()) {
+                            if (useTravelPointsCheckBox.isChecked()) {
                                 updatePoints.put("points", currentTravelPoints - travelPointsUsed);
                             } else {
                                 updatePoints.put("points", travelPointsEarned);
@@ -226,7 +224,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                                     .set(updatePoints).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    if(task.isSuccessful()) {
+                                    if (task.isSuccessful()) {
                                         Toast.makeText(getActivity(), R.string.updatedTravelPoints, Toast.LENGTH_LONG).show();
                                     }
                                 }
@@ -234,14 +232,22 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
                             Map<String, Object> transactionParams = new HashMap<>();
                             transactionParams.put("amount", amount);
-                            transactionParams.put("created_At", new Timestamp(new Date()));
+                            transactionParams.put("created_at", new Timestamp(new Date()));
                             transactionParams.put("payment_method", strNonce);
                             transactionParams.put("points_used", travelPointsUsed);
 
                             FirebaseFirestore.getInstance().collection("users")
                                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                                     .collection("transactions")
-                                    .add(transactionParams);
+                                    .add(transactionParams).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                    if (!task.isSuccessful()) {
+                                        Toast.makeText(getContext(),
+                                                "Error sending bill amount to server", Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
 
                         } else {
                             Log.d("Payment", response);
@@ -296,17 +302,17 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                         int moneyOff = (int) currentTravelPoints / 20;
                         travelPointsUsed = (int) currentTravelPoints / 20;
 
-                        discountedCost = Math.round(baseCost - moneyOff);
+                        discountedCost = Math.round(Integer.parseInt(amount) - moneyOff);
                     }
                 }
             });
 
         } else {
-            discountedCost = baseCost;
+            discountedCost = Integer.parseInt(amount);
             travelPointsUsed = 0;
         }
 
-        if(discountedCost < 0) {
+        if (discountedCost < 0) {
             discountedCost = 0;
         }
 

@@ -6,16 +6,19 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_bookRide"
-            android:title="@string/book_ride"
-            android:checked="true"/>
+            android:checked="true"
+            android:title="@string/book_ride" />
         <item
             android:id="@+id/nav_myReviews"
             android:title="@string/my_reviews" />
         <item
             android:id="@+id/nav_travelPoints"
-            android:title="@string/travel_points"/>
+            android:title="@string/travel_points" />
         <item
             android:id="@+id/nav_trackCar"
-            android:title="@string/track_my_car"/>
+            android:title="@string/track_my_car" />
+        <item
+            android:id="@+id/nav_myTransactions"
+            android:title="@string/my_transactions" />
     </group>
 </menu>
