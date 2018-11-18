@@ -11,9 +11,7 @@
     <FrameLayout
         android:id="@+id/flBookingScreenArea"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@id/llButtonNav"/>
+        android:layout_height="463dp" />
 
     <LinearLayout
         android:id="@+id/llButtonNav"

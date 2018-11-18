@@ -40,4 +40,15 @@
         android:gravity="center_horizontal"
         android:textSize="24sp"
         android:textColor="#000"/>
+
+    <fragment
+        android:id="@+id/fragment"
+        android:name="group.project.transportai.TravelPointsEarnedFragment"
+        android:layout_width="match_parent"
+        android:layout_height="370dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginStart="0dp"
+        android:layout_marginBottom="0dp" />
+
 </RelativeLayout>
