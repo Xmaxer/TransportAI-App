@@ -1,6 +1,5 @@
 package group.project.transportai;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -12,9 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import adapters.CarSelectionListAdapter;
 import adapters.TravelPointsEarnedAdapter;
-
 
 public class TravelPointsEarnedFragment extends Fragment {
 
@@ -36,15 +33,13 @@ public class TravelPointsEarnedFragment extends Fragment {
 
         rvpointList.setItemAnimator(new DefaultItemAnimator());
 
-        //  TravelPointsEarnedAdapter pointListAdapter = new TravelPointsEarnedAdapter(getContext(), carSelectedListener);
-        //  rvpointsList.setAdapter(pointListAdapter);
+        TravelPointsEarnedAdapter pointListAdapter = new TravelPointsEarnedAdapter(getContext());
+        rvpointList.setAdapter(pointListAdapter);
     }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.travel_points, container, false);
-
-
+        return inflater.inflate(R.layout.fragment_travel_points_earned, container, false);
     }
 }
