@@ -12,7 +12,7 @@
         android:layout_marginTop="31dp"
         android:textColor="#FFF"
         android:textSize="18sp"
-        android:textStyle="bold"></TextView>
+        android:textStyle="bold"/>
 
     <TextView
         android:id="@+id/pointsearned"
@@ -22,5 +22,5 @@
         android:layout_alignParentEnd="true"
         android:textColor="#FFF"
         android:textSize="18sp"
-        android:textStyle="bold"></TextView>
+        android:textStyle="bold"/>
 </RelativeLayout>
