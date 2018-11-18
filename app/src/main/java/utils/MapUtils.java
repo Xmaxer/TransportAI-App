@@ -24,7 +24,6 @@ import java.util.List;
 
 import group.project.transportai.R;
 import interfaces.RouteSelectedListener;
-import objects.DirectionsJSONParser;
 
 public class MapUtils {
 
