@@ -6,12 +6,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -19,16 +19,11 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 
 import group.project.transportai.R;
-import interfaces.CarSelectedListener;
-import objects.Car;
-import objects.GlideApp;
-import objects.Points;
+import objects.PointsEarned;
 
 public class TravelPointsEarnedAdapter extends RecyclerView.Adapter<TravelPointsEarnedAdapter.ViewHolder> {
 
-    private ArrayList<String> pointsList = new ArrayList<>();
-    private int selectedItem = -1;
-
+    private ArrayList<PointsEarned> pointsList = new ArrayList<>();
 
     private Context context;
 
@@ -37,20 +32,21 @@ public class TravelPointsEarnedAdapter extends RecyclerView.Adapter<TravelPoints
         this.context = context;
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        db.collection("routes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("routes").whereEqualTo("user_id", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                 if(task.isSuccessful()) {
                     for(QueryDocumentSnapshot document : task.getResult()) {
 
-                        String amount = document.get("points_earned").toString();
+                        String amount = document.get("points_gained").toString();
                         String date = document.get("created_at").toString();
 
+                        PointsEarned pointsEarned = new PointsEarned(date, amount);
 
-                        pointsList.add(date);
-                        pointsList.add(amount);
+                        pointsList.add(pointsEarned);
                     }
 
                     notifyDataSetChanged();
@@ -63,18 +59,15 @@ public class TravelPointsEarnedAdapter extends RecyclerView.Adapter<TravelPoints
     @NonNull
     @Override
     public TravelPointsEarnedAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
-        View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.travel_points_list_layout, parent, false);
-
+        View itemView = LayoutInflater.from(context).inflate(R.layout.travel_points_list_layout, parent, false);
         return new TravelPointsEarnedAdapter.ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(@NonNull TravelPointsEarnedAdapter.ViewHolder holder, int position) {
-        String point = pointsList.get(position);
-        holder.dateMade.setText(point.toString());
-        holder.pointsEarned.setText(point.toString());
-
+        PointsEarned point = pointsList.get(position);
+        holder.dateMade.setText(point.getDate());
+        holder.pointsEarned.setText(point.getPointsGained());
     }
 
     @Override
