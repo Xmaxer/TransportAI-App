@@ -324,7 +324,12 @@ public class BookingActivity extends AppCompatActivity
     }
 
     @Override
-    public void onPaymentCompleted() {
+    public void onPaymentCompleted(String routeID) {
         paymentMade = true;
+
+        Bundle args = new Bundle();
+        args.putString("routeID", routeID);
+
+        enterReviewFragment.setArguments(args);
     }
 }
