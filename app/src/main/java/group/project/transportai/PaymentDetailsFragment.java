@@ -25,6 +25,7 @@ import com.android.volley.toolbox.Volley;
 import com.braintreepayments.api.dropin.DropInRequest;
 import com.braintreepayments.api.dropin.DropInResult;
 import com.braintreepayments.api.models.PaymentMethodNonce;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
@@ -32,6 +33,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.GeoPoint;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -54,6 +56,10 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
             API_CALCULATE_PRICE = "http://www.transport-ai.com/requests/calculate_price";
 
     private String strNonce, amount;
+
+    private int time;
+
+    private LatLng originCoords, destCoords;
 
     private HashMap<String, String> paramsHashmap;
 
@@ -82,7 +88,9 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         destination = args.getString("Destination");
         carModel = args.getString("CarModel");
         distance = args.getDouble("Distance");
-        int time = args.getInt("Time");
+        time = args.getInt("Time");
+        originCoords = args.getParcelable("originCoords");
+        destCoords = args.getParcelable("destCoords");
 
         calculateCost(distance / 1000, time);//baseCost = calculateCost(distance/1000, 0); //round(10 + (distance / 1000));
 
@@ -248,6 +256,19 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                                     }
                                 }
                             });
+
+                            Map<String, Object> routeParams = new HashMap<>();
+                            routeParams.put("car", carModel);
+                            routeParams.put("completed", false);
+                            routeParams.put("created_at", new Timestamp(new Date()));
+                            routeParams.put("destination", new GeoPoint(destCoords.latitude, destCoords.longitude));
+                            routeParams.put("distance", distance);
+                            routeParams.put("origin", new GeoPoint(originCoords.latitude, originCoords.longitude));
+                            routeParams.put("points_gained", travelPointsEarned);
+                            routeParams.put("time_taken", time);
+                            routeParams.put("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+                            FirebaseFirestore.getInstance().collection("routes").add(routeParams);
 
                         } else {
                             Log.d("Payment", response);
