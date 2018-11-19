@@ -33,7 +33,7 @@ public class EnterReviewFragment extends Fragment implements View.OnClickListene
     private RatingBar rating;
     private EditText reviewComment;
 
-    private String carID;
+    private String carID, routeID;
 
     @Override
     public void onAttach(Context context) {
@@ -44,7 +44,11 @@ public class EnterReviewFragment extends Fragment implements View.OnClickListene
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        this.carID = getArguments().getString("carID");
+
+        Bundle args = getArguments();
+
+        this.carID = args.getString("carID");
+        this.routeID = args.getString("routeID");
         return inflater.inflate(R.layout.fragment_review_layout, container, false);
     }
 
@@ -76,6 +80,7 @@ public class EnterReviewFragment extends Fragment implements View.OnClickListene
             reviewParams.put("rating", customerRating);
             reviewParams.put("created_at", reviewCreated);
             reviewParams.put("car", carID);
+            reviewParams.put("route_id", routeID);
 
             FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .collection("reviews").add(reviewParams)
