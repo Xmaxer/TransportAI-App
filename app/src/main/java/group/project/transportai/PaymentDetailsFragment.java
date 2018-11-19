@@ -39,6 +39,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import interfaces.PaymentCompletedListener;
 
@@ -55,7 +56,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout",
             API_CALCULATE_PRICE = "http://www.transport-ai.com/requests/calculate_price";
 
-    private String strNonce, amount, carID;
+    private String strNonce, amount, carID, strPaymentMethod;
 
     private int time;
 
@@ -196,7 +197,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                 PaymentMethodNonce paymentNonce = dropInResult.getPaymentMethodNonce();
 
                 strNonce = paymentNonce.getNonce();
-
+                strPaymentMethod = paymentNonce.getTypeLabel();
                 paramsHashmap = new HashMap<>();
                 paramsHashmap.put("amount", amount);
                 paramsHashmap.put("payment_method_nonce", strNonce);
@@ -242,7 +243,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                             Map<String, Object> transactionParams = new HashMap<>();
                             transactionParams.put("amount", amount);
                             transactionParams.put("created_at", new Timestamp(new Date()));
-                            transactionParams.put("payment_method", strNonce);
+                            transactionParams.put("payment_method", strPaymentMethod);
                             transactionParams.put("points_used", travelPointsUsed);
 
                             FirebaseFirestore.getInstance().collection("users")
