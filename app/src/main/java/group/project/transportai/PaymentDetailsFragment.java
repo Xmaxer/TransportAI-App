@@ -217,7 +217,6 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                     public void onResponse(String response) {
                         Log.d("Payment", response);
                         if (response.contains("SuccessfulResult")) {
-                            paymentCompletedListener.onPaymentCompleted();
                             Toast.makeText(getActivity(), R.string.paymentCompleted, Toast.LENGTH_LONG).show();
 
                             Map<String, Object> updatePoints = new HashMap<>();
@@ -269,7 +268,15 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                             routeParams.put("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
                             FirebaseFirestore.getInstance().collection("cars").document(carID)
-                                    .collection("routes").add(routeParams);
+                                    .collection("routes").add(routeParams).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                                @Override
+                                public void onComplete(@NonNull Task<DocumentReference> task) {
+                                    if(task.isSuccessful()) {
+                                        String routeID = task.getResult().getId();
+                                        paymentCompletedListener.onPaymentCompleted(routeID);
+                                    }
+                                }
+                            });
 
                         } else {
                             Log.d("Payment", response);
