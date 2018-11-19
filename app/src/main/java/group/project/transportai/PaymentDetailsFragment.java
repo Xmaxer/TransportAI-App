@@ -55,7 +55,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout",
             API_CALCULATE_PRICE = "http://www.transport-ai.com/requests/calculate_price";
 
-    private String strNonce, amount;
+    private String strNonce, amount, carID;
 
     private int time;
 
@@ -86,6 +86,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
         origin = args.getString("Origin");
         destination = args.getString("Destination");
+        carID = args.getString("carID");
         carModel = args.getString("CarModel");
         distance = args.getDouble("Distance");
         time = args.getInt("Time");
@@ -258,7 +259,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                             });
 
                             Map<String, Object> routeParams = new HashMap<>();
-                            routeParams.put("car", carModel);
+                            routeParams.put("car", carID);
                             routeParams.put("completed", false);
                             routeParams.put("created_at", new Timestamp(new Date()));
                             routeParams.put("destination", new GeoPoint(destCoords.latitude, destCoords.longitude));
