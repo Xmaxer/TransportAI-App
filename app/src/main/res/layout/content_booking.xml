@@ -11,7 +11,9 @@
     <FrameLayout
         android:id="@+id/flBookingScreenArea"
         android:layout_width="match_parent"
-        android:layout_height="463dp" />
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/llButtonNav"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <LinearLayout
         android:id="@+id/llButtonNav"
@@ -24,23 +26,23 @@
 
         <Button
             android:id="@+id/bPrevious"
+            style="?android:buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/back"
             android:background="#e6e6e6"
-            android:textColor="#000"
-            style="?android:buttonBarButtonStyle"/>
+            android:text="@string/back"
+            android:textColor="#000" />
 
         <Button
             android:id="@+id/bNext"
+            style="?android:buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/next"
             android:background="#e6e6e6"
-            android:textColor="#000"
-            style="?android:buttonBarButtonStyle"/>
+            android:text="@string/next"
+            android:textColor="#000" />
 
     </LinearLayout>
 
