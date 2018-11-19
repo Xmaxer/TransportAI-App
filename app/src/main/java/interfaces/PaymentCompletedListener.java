@@ -2,6 +2,6 @@ package interfaces;
 
 public interface PaymentCompletedListener {
 
-    void onPaymentCompleted();
+    void onPaymentCompleted(String routeID);
 
 }
