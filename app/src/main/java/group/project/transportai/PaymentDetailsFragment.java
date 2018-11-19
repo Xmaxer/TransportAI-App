@@ -117,7 +117,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         carModelText.setText(carModel);
 
         costText = view.findViewById(R.id.tvCostData);
-        costText.setText("Calculating...");
+        costText.setText("...");
 
         useTravelPointsCheckBox = view.findViewById(R.id.cbUseTravelPoints);
         useTravelPointsCheckBox.setOnCheckedChangeListener(this);
@@ -310,34 +310,49 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
     @Override
     public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+        final TaskCompleteCallback callback = new TaskCompleteCallback() {
+            @Override
+            public void onTaskComplete(double discounted) {
+                if (discounted < 0) {
+                    discounted = 0;
+                }
+
+                costText.setText(String.valueOf(discounted));
+            }
+        };
         if (isChecked) {
 
             FirebaseFirestore.getInstance().collection("users")
                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
                     .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
-                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                public void onComplete(@NonNull com.google.android.gms.tasks.Task<DocumentSnapshot> task) {
 
                     if (task.isSuccessful()) {
-                        currentTravelPoints = (long) task.getResult().get("points");
+                        Object obj = task.getResult().get("points");
+                        if(obj == null) {
+                            Toast.makeText(getContext(), "You have no points", Toast.LENGTH_LONG).show();
+                            return;
+                        }
+                        currentTravelPoints = (long) obj;
 
-                        int moneyOff = (int) currentTravelPoints / 20;
-                        travelPointsUsed = (int) currentTravelPoints / 20;
+                        double moneyOff = (double) (currentTravelPoints / 20);
+                        travelPointsUsed = (int) currentTravelPoints;
 
-                        discountedCost = Math.round(Integer.parseInt(amount) - moneyOff);
+                        discountedCost = Math.round(Double.parseDouble(amount) - moneyOff);
+                        callback.onTaskComplete(discountedCost);
                     }
                 }
             });
 
         } else {
-            discountedCost = Integer.parseInt(amount);
+            discountedCost = Double.parseDouble(amount);
             travelPointsUsed = 0;
+            costText.setText(String.valueOf(discountedCost));
         }
+    }
 
-        if (discountedCost < 0) {
-            discountedCost = 0;
-        }
-
-        costText.setText(String.valueOf(discountedCost));
+    private interface TaskCompleteCallback {
+        void onTaskComplete(double discounted);
     }
 }
