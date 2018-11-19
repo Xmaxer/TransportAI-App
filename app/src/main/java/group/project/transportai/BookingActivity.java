@@ -259,6 +259,8 @@ public class BookingActivity extends AppCompatActivity
                         args.putString("CarModel", carModel);
                         args.putDouble("Distance", distance);
                         args.putInt("Time", time);
+                        args.putParcelable("originCoords", originCoords);
+                        args.putParcelable("destCoords", destCoords);
 
                         payDetailsFragment.setArguments(args);
 
