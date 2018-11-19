@@ -14,7 +14,7 @@
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintBottom_toTopOf="@id/llButtonNav"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <LinearLayout
         android:id="@+id/llButtonNav"
@@ -27,23 +27,23 @@
 
         <Button
             android:id="@+id/bPrevious"
-            style="?android:buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#e6e6e6"
             android:text="@string/back"
-            android:textColor="#000" />
+            android:background="#e6e6e6"
+            android:textColor="#000"
+            style="?android:buttonBarButtonStyle"/>
 
         <Button
             android:id="@+id/bNext"
-            style="?android:buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:background="#e6e6e6"
             android:text="@string/next"
-            android:textColor="#000" />
+            android:background="#e6e6e6"
+            android:textColor="#000"
+            style="?android:buttonBarButtonStyle"/>
 
     </LinearLayout>
 

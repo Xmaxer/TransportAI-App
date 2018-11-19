@@ -8,4 +8,5 @@
     <color name="foreground_material_light">#d222e2</color>
     <color name="text_color_primary">#ffffff</color>
     <color name="text_color_secondary">#ffffff</color>
+    <color name="item_background">#EAEFE4</color>
 </resources>
