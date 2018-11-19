@@ -24,10 +24,6 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.firebase.firestore.FirebaseFirestore;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import interfaces.RouteSelectedListener;
 import utils.MapUtils;
@@ -78,7 +74,6 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
                     mapUtils.drawRoute(pickupPoint.getLatLng(), endPoint.getLatLng());
                     routeSelectedListener.onRouteSelected(pickupPoint.getName().toString(),
                             endPoint.getName().toString(), place.getLatLng(), endPoint.getLatLng());
-                    postCoOrdsToDatabase();
                 }
             }
 
@@ -98,7 +93,6 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
                     mapUtils.drawRoute(pickupPoint.getLatLng(), endPoint.getLatLng());
                     routeSelectedListener.onRouteSelected(pickupPoint.getName().toString(),
                             endPoint.getName().toString(), pickupPoint.getLatLng(), place.getLatLng());
-                    postCoOrdsToDatabase();
                 }
             }
 
@@ -110,17 +104,6 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
 
         SupportMapFragment mMapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mMapFragment.getMapAsync(this);
-    }
-
-    private void postCoOrdsToDatabase() {
-
-        Map<String, Object> route = new HashMap<>();
-        route.put("origin_latitude", pickupPoint.getLatLng().latitude);
-        route.put("origin_longitude", pickupPoint.getLatLng().longitude);
-        route.put("destination_latitude", endPoint.getLatLng().latitude);
-        route.put("destination_longitude", endPoint.getLatLng().longitude);
-
-        FirebaseFirestore.getInstance().collection("routes").add(route);
     }
 
     @Override
