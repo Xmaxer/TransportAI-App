@@ -49,7 +49,7 @@ public class BookingActivity extends AppCompatActivity
 
     private int bookingStage;
 
-    private String origin, destination, carModel;
+    private String origin, destination, carModel, carID;
     private double distance;
     private int time;
 
@@ -255,6 +255,7 @@ public class BookingActivity extends AppCompatActivity
                         PaymentDetailsFragment payDetailsFragment = new PaymentDetailsFragment();
 
                         Bundle args = new Bundle();
+                        args.putString("carID", carID);
                         args.putString("Origin", origin);
                         args.putString("Destination", destination);
                         args.putString("CarModel", carModel);
@@ -308,6 +309,7 @@ public class BookingActivity extends AppCompatActivity
     @Override
     public void onCarSelected(String carID, String carModel) {
         this.carModel = carModel;
+        this.carID = carID;
         carValid = true;
 
         Bundle args = new Bundle();
