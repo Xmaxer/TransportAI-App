@@ -30,14 +30,15 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-        db.collection("reviews").whereEqualTo("user_ID", currentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("users").document(currentUser.getUid()).collection("reviews")
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         reviews.add(new Review(Float.parseFloat(document.get("rating").toString()), document.get("comment").toString()));
-                        notifyDataSetChanged();
                     }
+                    notifyDataSetChanged();
                 }
             }
         });
@@ -45,16 +46,13 @@ public class ReviewListAdapter extends RecyclerView.Adapter<ReviewListAdapter.Vi
 
     @Override
     public ReviewListAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.review_item_layout, parent, false);
-
         return new ReviewListAdapter.ViewHolder(itemView);
     }
 
     @Override
     public void onBindViewHolder(ReviewListAdapter.ViewHolder holder, int position) {
         Review review = reviews.get(position);
-
         holder.rating.setRating(review.getRating());
         holder.reviewText.setText(review.getReviewText());
     }

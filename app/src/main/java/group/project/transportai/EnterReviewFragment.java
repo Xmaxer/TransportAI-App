@@ -74,11 +74,11 @@ public class EnterReviewFragment extends Fragment implements View.OnClickListene
             Map<String, Object> reviewParams = new HashMap<>();
             reviewParams.put("comment", customerComment);
             reviewParams.put("rating", customerRating);
-            reviewParams.put("user_d", FirebaseAuth.getInstance().getCurrentUser().getUid());
             reviewParams.put("created_at", reviewCreated);
             reviewParams.put("car", carID);
 
-            FirebaseFirestore.getInstance().collection("reviews").add(reviewParams)
+            FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .collection("reviews").add(reviewParams)
                     .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentReference> task) {

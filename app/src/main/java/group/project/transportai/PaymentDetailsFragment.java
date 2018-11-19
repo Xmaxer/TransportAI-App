@@ -39,7 +39,6 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import interfaces.PaymentCompletedListener;
 
@@ -231,7 +230,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
                             FirebaseFirestore.getInstance().collection("users")
                                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .set(updatePoints).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    .update(updatePoints).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
@@ -260,7 +259,6 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                             });
 
                             Map<String, Object> routeParams = new HashMap<>();
-                            routeParams.put("car", carID);
                             routeParams.put("completed", false);
                             routeParams.put("created_at", new Timestamp(new Date()));
                             routeParams.put("destination", new GeoPoint(destCoords.latitude, destCoords.longitude));
@@ -270,7 +268,8 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                             routeParams.put("time_taken", time);
                             routeParams.put("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
 
-                            FirebaseFirestore.getInstance().collection("routes").add(routeParams);
+                            FirebaseFirestore.getInstance().collection("cars").document(carID)
+                                    .collection("routes").add(routeParams);
 
                         } else {
                             Log.d("Payment", response);
