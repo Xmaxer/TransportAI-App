@@ -132,9 +132,10 @@ public class BookingActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        } else if (id == R.id.sign_out) {
+//        if (id == R.id.action_settings) {
+//            return true;
+//        } else
+        if (id == R.id.sign_out) {
             FirebaseAuth.getInstance().signOut();
             startActivity(new Intent(BookingActivity.this, Main.class));
             finish();

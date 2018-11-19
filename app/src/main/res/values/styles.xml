@@ -12,6 +12,8 @@
         <item name="android:textColorSecondary">@color/text_color_secondary</item>
         <item name="android:statusBarColor">@color/routeColour</item>
         <item name="android:windowBackground">@drawable/s8</item>
+        <item name="android:itemTextAppearance">@color/text_color_secondary</item>
+        <item name="android:itemBackground">@color/item_background</item>
     </style>
 
     <style name="AppTheme.NoActionBar">
