@@ -39,7 +39,8 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("cars").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("cars").whereEqualTo("status", 0)
+                .get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
