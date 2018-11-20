@@ -2,6 +2,7 @@ package group.project.transportai;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -278,6 +279,14 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                                 }
                             });
 
+                            FirebaseFirestore.getInstance().collection("cars").document(carID)
+                                    .update("status", 1).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    new UpdateCarStatus().execute();
+                                }
+                            });
+
                         } else {
                             Log.d("Payment", response);
                         }
@@ -361,5 +370,39 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
     private interface TaskCompleteCallback {
         void onTaskComplete(double discounted);
+    }
+
+    private class UpdateCarStatus extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+
+            try {
+                Thread.sleep(10000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            FirebaseFirestore.getInstance().collection("cars").document(carID).get()
+                    .addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                            if(task.isSuccessful()) {
+                                int status = (int) task.getResult().get("status");
+
+                                if(status != 2) {
+                                    Toast.makeText(getContext(), "Car ride not confirmed", Toast.LENGTH_LONG).show();
+                                }
+                            }
+                        }
+                    });
+        }
     }
 }
