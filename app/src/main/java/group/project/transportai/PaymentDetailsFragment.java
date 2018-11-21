@@ -239,25 +239,6 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                                 }
                             });
 
-                            Map<String, Object> transactionParams = new HashMap<>();
-                            transactionParams.put("amount", Double.parseDouble(amount));
-                            transactionParams.put("created_at", new Timestamp(new Date()));
-                            transactionParams.put("payment_method", strPaymentMethod);
-                            transactionParams.put("points_used", travelPointsUsed);
-
-                            FirebaseFirestore.getInstance().collection("users")
-                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .collection("transactions")
-                                    .add(transactionParams).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentReference> task) {
-                                    if (!task.isSuccessful()) {
-                                        Toast.makeText(getContext(),
-                                                "Error sending bill amount to server", Toast.LENGTH_LONG).show();
-                                    }
-                                }
-                            });
-
                             Map<String, Object> routeParams = new HashMap<>();
                             routeParams.put("completed", false);
                             routeParams.put("created_at", new Timestamp(new Date()));
@@ -274,6 +255,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                                 public void onComplete(@NonNull Task<DocumentReference> task) {
                                     if(task.isSuccessful()) {
                                         String routeID = task.getResult().getId();
+                                        postTransactionToDB(routeID);
                                         paymentCompletedListener.onPaymentCompleted(routeID);
                                     }
                                 }
@@ -322,6 +304,28 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         };
 
         requestQ.add(strRequest);
+    }
+
+    private void postTransactionToDB(String routeID) {
+        Map<String, Object> transactionParams = new HashMap<>();
+        transactionParams.put("amount", Double.parseDouble(amount));
+        transactionParams.put("created_at", new Timestamp(new Date()));
+        transactionParams.put("payment_method", strPaymentMethod);
+        transactionParams.put("points_used", travelPointsUsed);
+        transactionParams.put("route_id", routeID);
+
+        FirebaseFirestore.getInstance().collection("users")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .collection("transactions")
+                .add(transactionParams).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if (!task.isSuccessful()) {
+                    Toast.makeText(getContext(),
+                            "Error sending bill amount to server", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
     }
 
     @Override
