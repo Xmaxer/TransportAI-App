@@ -240,7 +240,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                             });
 
                             Map<String, Object> transactionParams = new HashMap<>();
-                            transactionParams.put("amount", amount);
+                            transactionParams.put("amount", Double.parseDouble(amount));
                             transactionParams.put("created_at", new Timestamp(new Date()));
                             transactionParams.put("payment_method", strPaymentMethod);
                             transactionParams.put("points_used", travelPointsUsed);
@@ -395,7 +395,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if(task.isSuccessful()) {
-                                int status = (int) task.getResult().get("status");
+                                int status = Integer.parseInt(task.getResult().get("status").toString());
 
                                 if(status != 2) {
                                     Toast.makeText(getContext(), "Car ride not confirmed", Toast.LENGTH_LONG).show();
