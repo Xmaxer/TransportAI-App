@@ -20,6 +20,7 @@ import android.widget.Toast;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 
 import java.util.HashMap;
@@ -69,7 +70,7 @@ public class BookingActivity extends AppCompatActivity
 
         FirebaseFirestore.getInstance().collection("users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .update(emailParams);
+                .set(emailParams, SetOptions.merge());
 
         bNext = findViewById(R.id.bNext);
         bNext.setOnClickListener(this);
