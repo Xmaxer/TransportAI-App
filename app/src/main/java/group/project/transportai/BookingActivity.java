@@ -321,7 +321,6 @@ public class BookingActivity extends AppCompatActivity
         args.putDouble("destLongitude", destCoords.longitude);
 
         trackCarFragment.setArguments(args);
-        enterReviewFragment.setArguments(args);
     }
 
     @Override
@@ -330,6 +329,7 @@ public class BookingActivity extends AppCompatActivity
 
         Bundle args = new Bundle();
         args.putString("routeID", routeID);
+        args.putString("carID", carID);
 
         enterReviewFragment.setArguments(args);
     }
