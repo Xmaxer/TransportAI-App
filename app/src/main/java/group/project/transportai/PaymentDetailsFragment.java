@@ -182,8 +182,13 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     }
 
     private void makePayment() {
-        DropInRequest dropIn = new DropInRequest().clientToken("sandbox_b8hbk65s_s2w84n9y8wd4dkpm");
-        startActivityForResult(dropIn.getIntent(getActivity()), PAYPAL_REQUEST_CODE);
+        if(discountedCost > 0) {
+            DropInRequest dropIn = new DropInRequest().clientToken("sandbox_b8hbk65s_s2w84n9y8wd4dkpm");
+            startActivityForResult(dropIn.getIntent(getActivity()), PAYPAL_REQUEST_CODE);
+        } else {
+            strPaymentMethod = "Points";
+            postRouteToDatabase();
+        }
     }
 
     @Override
@@ -239,35 +244,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                                 }
                             });
 
-                            Map<String, Object> routeParams = new HashMap<>();
-                            routeParams.put("completed", false);
-                            routeParams.put("created_at", new Timestamp(new Date()));
-                            routeParams.put("destination", new GeoPoint(destCoords.latitude, destCoords.longitude));
-                            routeParams.put("distance", distance);
-                            routeParams.put("origin", new GeoPoint(originCoords.latitude, originCoords.longitude));
-                            routeParams.put("points_gained", travelPointsEarned);
-                            routeParams.put("time_taken", time);
-                            routeParams.put("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
-
-                            FirebaseFirestore.getInstance().collection("cars").document(carID)
-                                    .collection("routes").add(routeParams).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                                @Override
-                                public void onComplete(@NonNull Task<DocumentReference> task) {
-                                    if(task.isSuccessful()) {
-                                        String routeID = task.getResult().getId();
-                                        postTransactionToDB(routeID);
-                                        paymentCompletedListener.onPaymentCompleted(routeID);
-                                    }
-                                }
-                            });
-
-                            FirebaseFirestore.getInstance().collection("cars").document(carID)
-                                    .update("status", 1).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    new UpdateCarStatus().execute();
-                                }
-                            });
+                            postRouteToDatabase();
 
                         } else {
                             Log.d("Payment", response);
@@ -304,6 +281,41 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         };
 
         requestQ.add(strRequest);
+    }
+
+    private void postRouteToDatabase() {
+        Map<String, Object> routeParams = new HashMap<>();
+        routeParams.put("completed", false);
+        routeParams.put("created_at", new Timestamp(new Date()));
+        routeParams.put("destination", new GeoPoint(destCoords.latitude, destCoords.longitude));
+        routeParams.put("distance", distance);
+        routeParams.put("origin", new GeoPoint(originCoords.latitude, originCoords.longitude));
+        routeParams.put("points_gained", travelPointsEarned);
+        routeParams.put("time_taken", time);
+        routeParams.put("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+
+        FirebaseFirestore.getInstance().collection("cars").document(carID)
+                .collection("routes").add(routeParams).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if(task.isSuccessful()) {
+                    String routeID = task.getResult().getId();
+                    postTransactionToDB(routeID);
+                    updateCarStatus();
+                    paymentCompletedListener.onPaymentCompleted(routeID);
+                }
+            }
+        });
+    }
+
+    private void updateCarStatus() {
+        FirebaseFirestore.getInstance().collection("cars").document(carID)
+                .update("status", 1).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                new UpdateCarStatus().execute();
+            }
+        });
     }
 
     private void postTransactionToDB(String routeID) {
