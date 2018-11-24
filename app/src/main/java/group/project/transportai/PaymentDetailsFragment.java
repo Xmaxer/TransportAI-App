@@ -182,7 +182,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     }
 
     private void makePayment() {
-        if(discountedCost > 0) {
+        if(discountedCost > 0 || !useTravelPointsCheckBox.isChecked()) {
             DropInRequest dropIn = new DropInRequest().clientToken("sandbox_b8hbk65s_s2w84n9y8wd4dkpm");
             startActivityForResult(dropIn.getIntent(getActivity()), PAYPAL_REQUEST_CODE);
         } else {
@@ -325,6 +325,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         transactionParams.put("payment_method", strPaymentMethod);
         transactionParams.put("points_used", travelPointsUsed);
         transactionParams.put("route_id", routeID);
+        transactionParams.put("car_id", carID);
 
         FirebaseFirestore.getInstance().collection("users")
                 .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
