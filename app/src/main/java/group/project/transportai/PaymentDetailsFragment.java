@@ -301,6 +301,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                 if(task.isSuccessful()) {
                     String routeID = task.getResult().getId();
                     postTransactionToDB(routeID);
+                    updateCarRoute(routeID);
                     updateCarStatus();
                     paymentCompletedListener.onPaymentCompleted(routeID);
                 }
@@ -316,6 +317,11 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                 new UpdateCarStatus().execute();
             }
         });
+    }
+
+    private void updateCarRoute(String routeID) {
+        FirebaseFirestore.getInstance().collection("cars").document(carID)
+                .update("route_id", routeID);
     }
 
     private void postTransactionToDB(String routeID) {
