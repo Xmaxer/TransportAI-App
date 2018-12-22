@@ -35,6 +35,7 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.GeoPoint;
+import com.google.firebase.firestore.SetOptions;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -95,6 +96,23 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         destCoords = args.getParcelable("destCoords");
 
         calculateCost(distance / 1000, time);//baseCost = calculateCost(distance/1000, 0); //round(10 + (distance / 1000));
+
+        FirebaseFirestore.getInstance().collection("users")
+                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()) {
+                    Object points = task.getResult().get("points");
+
+                    if(points == null || (long) points == 0) {
+                        currentTravelPoints = 0;
+                    } else {
+                        currentTravelPoints = (long) points;
+                    }
+                }
+            }
+        });
 
         travelPointsEarned = (int) Math.ceil(distance / 100);
 
@@ -230,12 +248,12 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                             if (useTravelPointsCheckBox.isChecked()) {
                                 updatePoints.put("points", currentTravelPoints - travelPointsUsed);
                             } else {
-                                updatePoints.put("points", travelPointsEarned);
+                                updatePoints.put("points", currentTravelPoints + travelPointsEarned);
                             }
 
                             FirebaseFirestore.getInstance().collection("users")
                                     .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                                    .update(updatePoints).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    .set(updatePoints, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if (task.isSuccessful()) {
