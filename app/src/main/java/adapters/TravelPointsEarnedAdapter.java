@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -17,6 +18,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 import group.project.transportai.R;
 import objects.PointsEarned;
@@ -51,9 +53,19 @@ public class TravelPointsEarnedAdapter extends RecyclerView.Adapter<TravelPoints
                                     for(QueryDocumentSnapshot document : task.getResult()) {
 
                                         String amount = document.get("points_gained").toString();
-                                        String date = document.get("created_at").toString();
+                                        Timestamp date = document.getTimestamp("created_at");
 
-                                        PointsEarned pointsEarned = new PointsEarned(date, amount);
+                                        Calendar cal = Calendar.getInstance();
+                                        cal.setTime(date.toDate());
+
+                                        int day = cal.get(Calendar.DAY_OF_WEEK);
+                                        int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+                                        int month = cal.get(Calendar.MONTH);
+                                        int year = cal.get(Calendar.YEAR);
+
+                                        String strDate = getDateString(day, dayOfMonth, month, year);
+
+                                        PointsEarned pointsEarned = new PointsEarned(strDate, amount);
 
                                         pointsList.add(pointsEarned);
                                     }
@@ -67,6 +79,19 @@ public class TravelPointsEarnedAdapter extends RecyclerView.Adapter<TravelPoints
                 }
             }
         });
+    }
+
+    private String getDateString(int day, int dayOfMonth, int month, int year) {
+
+        String[] days = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"};
+        String[] months = {"January", "February", "March", "April", "May", "June", "July", "August", "September",
+                        "October", "November", "December"};
+
+        String d = days[day - 1];
+        String m = months[month];
+
+        return d + " " + dayOfMonth + " " + m + " " + year;
+
     }
 
     @NonNull
