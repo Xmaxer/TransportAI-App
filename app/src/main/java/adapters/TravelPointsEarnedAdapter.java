@@ -27,31 +27,44 @@ public class TravelPointsEarnedAdapter extends RecyclerView.Adapter<TravelPoints
 
     private Context context;
 
+    private FirebaseFirestore db;
+    private FirebaseUser user;
+
     public TravelPointsEarnedAdapter(Context context) {
 
         this.context = context;
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        db = FirebaseFirestore.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
 
-        db.collection("cars").document(user.getUid()).collection("routes").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("cars").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
                 if(task.isSuccessful()) {
-                    for(QueryDocumentSnapshot document : task.getResult()) {
+                    for(QueryDocumentSnapshot doc : task.getResult()) {
+                        db.collection("cars").document(doc.getId()).collection("routes")
+                                .whereEqualTo("user_id", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                        String amount = document.get("points_gained").toString();
-                        String date = document.get("created_at").toString();
+                                if(task.isSuccessful()) {
+                                    for(QueryDocumentSnapshot document : task.getResult()) {
 
-                        PointsEarned pointsEarned = new PointsEarned(date, amount);
+                                        String amount = document.get("points_gained").toString();
+                                        String date = document.get("created_at").toString();
 
-                        pointsList.add(pointsEarned);
+                                        PointsEarned pointsEarned = new PointsEarned(date, amount);
+
+                                        pointsList.add(pointsEarned);
+                                    }
+
+                                    notifyDataSetChanged();
+                                }
+
+                            }
+                        });
                     }
-
-                    notifyDataSetChanged();
                 }
-
             }
         });
     }
