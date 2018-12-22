@@ -11,6 +11,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.firebase.iid.InstanceIdResult;
 import com.google.firebase.messaging.FirebaseMessagingService;
@@ -36,7 +37,7 @@ public class TransportAICloudMessagingNotificationService extends FirebaseMessag
 
                     FirebaseFirestore.getInstance().collection("users")
                             .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .set(tokenParams);
+                            .set(tokenParams, SetOptions.merge());
                 }
             }
         });
