@@ -43,18 +43,18 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
 
         if(args != null) {
             carID = args.getString("carID");
+
+            if(carID != null && carID.length() > 0) {
+
+                origin = new LatLng(args.getDouble("originLatitude"), args.getDouble("originLongitude"));
+                dest = new LatLng(args.getDouble("destLatitude"), args.getDouble("destLongitude"));
+
+                canTrack = true;
+                return inflater.inflate(R.layout.fragment_track_car, container, false);
+            }
         }
 
-        if(carID != null && carID.length() > 0) {
-
-            origin = new LatLng(args.getDouble("originLatitude"), args.getDouble("originLongitude"));
-            dest = new LatLng(args.getDouble("destLatitude"), args.getDouble("destLongitude"));
-
-            canTrack = true;
-            return inflater.inflate(R.layout.fragment_track_car, container, false);
-        } else {
-            return inflater.inflate(R.layout.fragment_track_car_no_booking_layout, container, false);
-        }
+        return inflater.inflate(R.layout.fragment_track_car_no_booking_layout, container, false);
     }
 
     @Override
@@ -99,11 +99,14 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
                             @Override
                             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                                 if(task.isSuccessful()) {
-                                    GeoPoint location = (GeoPoint) task.getResult().get("location");
 
-                                    publishProgress(location);
+                                    DocumentSnapshot docSnap = task.getResult();
 
-                                    carStatus = (int) task.getResult().get("status");
+                                    if(docSnap != null) {
+                                        GeoPoint location = (GeoPoint) docSnap.get("location");
+                                        publishProgress(location);
+                                        carStatus = (int) task.getResult().get("status");
+                                    }
                                 }
                             }
                         });
