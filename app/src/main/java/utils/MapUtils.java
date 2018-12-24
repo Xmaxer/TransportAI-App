@@ -44,7 +44,7 @@ public class MapUtils {
         MapUtils.routeSelectedListener = routeSelectedListener;
     }
 
-    public void drawRoute(LatLng origin, LatLng dest) {
+    public void removeMarkerAndLine() {
 
         if(routeLine != null) {
             routeLine.remove();
@@ -57,6 +57,11 @@ public class MapUtils {
         if(destMarker != null) {
             destMarker.remove();
         }
+    }
+
+    public void drawRoute(LatLng origin, LatLng dest) {
+
+        removeMarkerAndLine();
 
         originMarker = map.addMarker(new MarkerOptions().position(origin).title("Origin"));
         destMarker = map.addMarker(new MarkerOptions().position(dest).title("Destination"));
