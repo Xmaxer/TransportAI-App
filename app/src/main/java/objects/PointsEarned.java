@@ -20,8 +20,4 @@ public class PointsEarned {
     public String getPointsGained() {
         return pointsGained;
     }
-
-    public void setPointsGained(String pointsGained) {
-        this.pointsGained = pointsGained;
-    }
 }

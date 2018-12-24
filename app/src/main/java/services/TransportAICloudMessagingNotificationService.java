@@ -10,6 +10,7 @@ import android.support.v4.app.NotificationCompat;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.iid.FirebaseInstanceId;
@@ -24,20 +25,28 @@ import group.project.transportai.R;
 
 public class TransportAICloudMessagingNotificationService extends FirebaseMessagingService {
 
+    private FirebaseUser user;
+
     @Override
     public void onNewToken(String s) {
         super.onNewToken(s);
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
         FirebaseInstanceId.getInstance().getInstanceId().addOnCompleteListener(new OnCompleteListener<InstanceIdResult>() {
             @Override
             public void onComplete(@NonNull Task<InstanceIdResult> task) {
                 if(task.isSuccessful()) {
-                    Map<String, Object> tokenParams = new HashMap<>();
-                    tokenParams.put("messaging_token", task.getResult().getToken());
 
-                    FirebaseFirestore.getInstance().collection("users")
-                            .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                            .set(tokenParams, SetOptions.merge());
+                    InstanceIdResult result = task.getResult();
+
+                    if (result != null && user != null) {
+                        Map<String, Object> tokenParams = new HashMap<>();
+                        tokenParams.put("messaging_token", task.getResult().getToken());
+
+                        FirebaseFirestore.getInstance().collection("users")
+                                .document(user.getUid())
+                                .set(tokenParams, SetOptions.merge());
+                    }
                 }
             }
         });
@@ -47,7 +56,7 @@ public class TransportAICloudMessagingNotificationService extends FirebaseMessag
     public void onMessageReceived(RemoteMessage remoteMessage) {
         super.onMessageReceived(remoteMessage);
 
-        if(remoteMessage.getData().isEmpty()) {
+        if(remoteMessage.getData().isEmpty() && remoteMessage.getNotification() != null) {
             showNotification(remoteMessage.getNotification().getTitle(), remoteMessage.getNotification().getBody());
         } else {
             showNotification(remoteMessage.getData());
@@ -70,7 +79,9 @@ public class TransportAICloudMessagingNotificationService extends FirebaseMessag
 
             channel.setDescription("TransportAI Notification Channel");
 
-            notifManager.createNotificationChannel(channel);
+            if (notifManager != null) {
+                notifManager.createNotificationChannel(channel);
+            }
         }
 
         NotificationCompat.Builder builder =
@@ -79,7 +90,9 @@ public class TransportAICloudMessagingNotificationService extends FirebaseMessag
                 .setContentText(body)
                 .setSmallIcon(R.mipmap.ardra_logo_round);
 
-        notifManager.notify(23,  builder.build());
+        if (notifManager != null) {
+            notifManager.notify(23,  builder.build());
+        }
 
     }
 }

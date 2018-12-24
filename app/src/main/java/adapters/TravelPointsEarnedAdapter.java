@@ -43,38 +43,50 @@ public class TravelPointsEarnedAdapter extends RecyclerView.Adapter<TravelPoints
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if(task.isSuccessful()) {
-                    for(QueryDocumentSnapshot doc : task.getResult()) {
-                        db.collection("cars").document(doc.getId()).collection("routes")
-                                .whereEqualTo("user_id", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                                if(task.isSuccessful()) {
-                                    for(QueryDocumentSnapshot document : task.getResult()) {
+                    QuerySnapshot querySnap = task.getResult();
 
-                                        String amount = document.get("points_gained").toString();
-                                        Timestamp date = document.getTimestamp("created_at");
+                    if(querySnap != null) {
+                        for (QueryDocumentSnapshot doc : querySnap) {
+                            db.collection("cars").document(doc.getId()).collection("routes")
+                                    .whereEqualTo("user_id", user.getUid()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                                @Override
+                                public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-                                        Calendar cal = Calendar.getInstance();
-                                        cal.setTime(date.toDate());
+                                    if (task.isSuccessful()) {
 
-                                        int day = cal.get(Calendar.DAY_OF_WEEK);
-                                        int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
-                                        int month = cal.get(Calendar.MONTH);
-                                        int year = cal.get(Calendar.YEAR);
+                                        QuerySnapshot routeSnap = task.getResult();
 
-                                        String strDate = getDateString(day, dayOfMonth, month, year);
+                                        if (routeSnap != null) {
+                                            for (QueryDocumentSnapshot document : routeSnap) {
 
-                                        PointsEarned pointsEarned = new PointsEarned(strDate, amount);
+                                                String amount = document.get("points_gained").toString();
+                                                Timestamp date = document.getTimestamp("created_at");
 
-                                        pointsList.add(pointsEarned);
+                                                Calendar cal = Calendar.getInstance();
+
+                                                if(date != null) {
+                                                    cal.setTime(date.toDate());
+                                                }
+
+                                                int day = cal.get(Calendar.DAY_OF_WEEK);
+                                                int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+                                                int month = cal.get(Calendar.MONTH);
+                                                int year = cal.get(Calendar.YEAR);
+
+                                                String strDate = getDateString(day, dayOfMonth, month, year);
+
+                                                PointsEarned pointsEarned = new PointsEarned(strDate, amount);
+
+                                                pointsList.add(pointsEarned);
+                                            }
+
+                                            notifyDataSetChanged();
+                                        }
                                     }
-
-                                    notifyDataSetChanged();
                                 }
-
-                            }
-                        });
+                            });
+                        }
                     }
                 }
             }

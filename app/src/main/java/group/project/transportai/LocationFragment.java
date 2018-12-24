@@ -1,14 +1,10 @@
 package group.project.transportai;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,8 +25,6 @@ import interfaces.RouteSelectedListener;
 import utils.MapUtils;
 
 public class LocationFragment extends Fragment implements OnMapReadyCallback {
-
-    private final int MY_LOCATION_PERMISSION = 100;
 
     private Place pickupPoint, endPoint;
 
@@ -108,19 +102,8 @@ public class LocationFragment extends Fragment implements OnMapReadyCallback {
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-
-        if (getActivity() != null) {
-            if (ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, MY_LOCATION_PERMISSION);
-            } else {
-                googleMap.setMyLocationEnabled(true);
-            }
-        }
-
         googleMap.setMinZoomPreference(8.0f);
         googleMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(51.903614, -8.468399)));
-
         mapUtils = new MapUtils(googleMap, routeSelectedListener);
     }
 }

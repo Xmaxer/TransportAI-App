@@ -45,19 +45,24 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
                 if(task.isSuccessful()) {
-                    for(QueryDocumentSnapshot document : task.getResult()) {
 
-                        String make = document.get("make").toString();
-                        String model = document.get("model").toString();
-                        String regNo = document.getId();
-                        int status = Integer.parseInt(document.get("status").toString());
-                        String imgURL = "http://ardra.s3.amazonaws.com/public/cars/" + document.get("image").toString();
+                    QuerySnapshot querySnap = task.getResult();
 
-                        Car car = new Car(make, model, regNo, status, imgURL);
-                        carList.add(car);
+                    if (querySnap != null) {
+                        for (QueryDocumentSnapshot document : querySnap) {
+
+                            String make = document.getString("make");
+                            String model = document.getString("model");
+                            String regNo = document.getId();
+                            int status = Integer.parseInt(document.getString("status"));
+                            String imgURL = "http://ardra.s3.amazonaws.com/public/cars/" + document.getString("image");
+
+                            Car car = new Car(make, model, regNo, status, imgURL);
+                            carList.add(car);
+                        }
+
+                        notifyDataSetChanged();
                     }
-
-                    notifyDataSetChanged();
                 }
 
             }

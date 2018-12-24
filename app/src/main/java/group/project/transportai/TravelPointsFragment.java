@@ -66,17 +66,22 @@ public class TravelPointsFragment extends Fragment {
                 @Override
                 public void onComplete(@NonNull Task<DocumentSnapshot> task) {
 
-                    Object points = task.getResult().get("points");
+                    DocumentSnapshot docSnap = task.getResult();
 
-                    if(points != null) {
+                    if(docSnap != null) {
 
-                        if (points.equals("")) {
-                            tvTotalPoints.setText("0");
+                        Object points = docSnap.get("points");
+
+                        if (points != null) {
+
+                            if (points.equals("")) {
+                                tvTotalPoints.setText("0");
+                            } else {
+                                tvTotalPoints.setText(points.toString());
+                            }
                         } else {
-                            tvTotalPoints.setText(points.toString());
+                            tvTotalPoints.setText("0");
                         }
-                    } else {
-                        tvTotalPoints.setText("0");
                     }
                 }
             });

@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
@@ -26,26 +27,34 @@ public class MyTransactionsAdapter extends RecyclerView.Adapter<MyTransactionsAd
 
     public MyTransactionsAdapter() {
         FirebaseFirestore db = FirebaseFirestore.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        db.collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .collection("transactions").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if(task.isSuccessful()) {
-                    for(QueryDocumentSnapshot doc : task.getResult()) {
+        if(user != null) {
+            db.collection("users").document(user.getUid())
+                    .collection("transactions").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
 
-                        double cost = Double.parseDouble(doc.get("amount").toString());
-                        String paymentMethod = doc.getString("payment_method");
-                        int pointsUsed = Integer.parseInt(doc.get("points_used").toString());
-                        String date = doc.get("created_at").toString();
+                        QuerySnapshot querySnap = task.getResult();
 
-                        Transaction transaction  = new Transaction(paymentMethod, cost, pointsUsed, date);
-                        transactions.add(transaction);
+                        if (querySnap != null) {
+                            for (QueryDocumentSnapshot doc : querySnap) {
+
+                                double cost = Double.parseDouble(doc.getString("amount"));
+                                String paymentMethod = doc.getString("payment_method");
+                                int pointsUsed = Integer.parseInt(doc.getString("points_used"));
+                                String date = doc.get("created_at").toString();
+
+                                Transaction transaction = new Transaction(paymentMethod, cost, pointsUsed, date);
+                                transactions.add(transaction);
+                            }
+                            notifyDataSetChanged();
+                        }
                     }
-                    notifyDataSetChanged();
                 }
-            }
-        });
+            });
+        }
     }
 
     @NonNull

@@ -17,6 +17,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -47,8 +48,11 @@ public class EnterReviewFragment extends Fragment implements View.OnClickListene
 
         Bundle args = getArguments();
 
-        this.carID = args.getString("carID");
-        this.routeID = args.getString("routeID");
+        if(args != null) {
+            this.carID = args.getString("carID");
+            this.routeID = args.getString("routeID");
+        }
+
         return inflater.inflate(R.layout.fragment_review_layout, container, false);
     }
 
@@ -73,6 +77,7 @@ public class EnterReviewFragment extends Fragment implements View.OnClickListene
             Toast.makeText(getActivity(), R.string.please_enter_review, Toast.LENGTH_LONG).show();
         } else {
 
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
             Timestamp reviewCreated = new Timestamp(new Date());
 
             Map<String, Object> reviewParams = new HashMap<>();
@@ -82,18 +87,20 @@ public class EnterReviewFragment extends Fragment implements View.OnClickListene
             reviewParams.put("car", carID);
             reviewParams.put("route_id", routeID);
 
-            FirebaseFirestore.getInstance().collection("users").document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                    .collection("reviews").add(reviewParams)
-                    .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentReference> task) {
-                            if (!task.isSuccessful()) {
-                                Toast.makeText(getContext(), R.string.error_posting_review, Toast.LENGTH_LONG).show();
-                            } else {
-                                bookingCompleteListener.onBookingComplete();
+            if(user != null) {
+                FirebaseFirestore.getInstance().collection("users").document(user.getUid())
+                        .collection("reviews").add(reviewParams)
+                        .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                            @Override
+                            public void onComplete(@NonNull Task<DocumentReference> task) {
+                                if (!task.isSuccessful()) {
+                                    Toast.makeText(getContext(), R.string.error_posting_review, Toast.LENGTH_LONG).show();
+                                } else {
+                                    bookingCompleteListener.onBookingComplete();
+                                }
                             }
-                        }
-                    });
+                        });
+            }
         }
     }
 }

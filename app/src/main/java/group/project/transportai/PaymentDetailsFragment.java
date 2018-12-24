@@ -14,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -32,6 +31,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -58,7 +58,9 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     private static final String API_CHECKOUT = "https://ardra.herokuapp.com/braintree/checkout",
             API_CALCULATE_PRICE = "http://www.transport-ai.com/requests/calculate_price";
 
-    private String strNonce, amount, carID, strPaymentMethod;
+    private String amount;
+    private String carID;
+    private String strPaymentMethod;
 
     private int time;
 
@@ -74,6 +76,8 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
     private Context context;
 
+    private FirebaseUser user;
+
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
@@ -85,35 +89,46 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+
         Bundle args = this.getArguments();
 
-        origin = args.getString("Origin");
-        destination = args.getString("Destination");
-        carID = args.getString("carID");
-        carModel = args.getString("CarModel");
-        distance = args.getDouble("Distance");
-        time = args.getInt("Time");
-        originCoords = args.getParcelable("originCoords");
-        destCoords = args.getParcelable("destCoords");
+        if(args != null) {
+            origin = args.getString("Origin");
+            destination = args.getString("Destination");
+            carID = args.getString("carID");
+            carModel = args.getString("CarModel");
+            distance = args.getDouble("Distance");
+            time = args.getInt("Time");
+            originCoords = args.getParcelable("originCoords");
+            destCoords = args.getParcelable("destCoords");
+        }
 
         calculateCost(distance / 1000, time);//baseCost = calculateCost(distance/1000, 0); //round(10 + (distance / 1000));
 
-        FirebaseFirestore.getInstance().collection("users")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()) {
-                    Object points = task.getResult().get("points");
+        if(user != null) {
+            FirebaseFirestore.getInstance().collection("users")
+                    .document(user.getUid())
+                    .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
 
-                    if(points == null || (long) points == 0) {
-                        currentTravelPoints = 0;
-                    } else {
-                        currentTravelPoints = (long) points;
+                        DocumentSnapshot docSnap = task.getResult();
+
+                        if(docSnap != null) {
+                            Object points = docSnap.get("points");
+
+                            if (points == null || (long) points == 0) {
+                                currentTravelPoints = 0;
+                            } else {
+                                currentTravelPoints = (long) points;
+                            }
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
 
         travelPointsEarned = (int) Math.ceil(distance / 100);
 
@@ -220,13 +235,15 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                 DropInResult dropInResult = data.getParcelableExtra(DropInResult.EXTRA_DROP_IN_RESULT);
                 PaymentMethodNonce paymentNonce = dropInResult.getPaymentMethodNonce();
 
-                strNonce = paymentNonce.getNonce();
-                strPaymentMethod = paymentNonce.getTypeLabel();
-                paramsHashmap = new HashMap<>();
-                paramsHashmap.put("amount", amount);
-                paramsHashmap.put("payment_method_nonce", strNonce);
+                if(paymentNonce != null) {
+                    String strNonce = paymentNonce.getNonce();
+                    strPaymentMethod = paymentNonce.getTypeLabel();
+                    paramsHashmap = new HashMap<>();
+                    paramsHashmap.put("amount", amount);
+                    paramsHashmap.put("payment_method_nonce", strNonce);
 
-                sendPayment();
+                    sendPayment();
+                }
             }
         }
     }
@@ -253,7 +270,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                             }
 
                             FirebaseFirestore.getInstance().collection("users")
-                                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                                    .document(user.getUid())
                                     .set(updatePoints, SetOptions.merge()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
@@ -311,18 +328,23 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         routeParams.put("origin", new GeoPoint(originCoords.latitude, originCoords.longitude));
         routeParams.put("points_gained", travelPointsEarned);
         routeParams.put("time_taken", time);
-        routeParams.put("user_id", FirebaseAuth.getInstance().getCurrentUser().getUid());
+        routeParams.put("user_id", user.getUid());
 
         FirebaseFirestore.getInstance().collection("cars").document(carID)
                 .collection("routes").add(routeParams).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if(task.isSuccessful()) {
-                    String routeID = task.getResult().getId();
-                    postTransactionToDB(routeID);
-                    updateCarRoute(routeID);
-                    updateCarStatus();
-                    paymentCompletedListener.onPaymentCompleted(routeID);
+
+                    DocumentReference docRef = task.getResult();
+
+                    if(docRef != null) {
+                        String routeID = task.getResult().getId();
+                        postTransactionToDB(routeID);
+                        updateCarRoute(routeID);
+                        updateCarStatus();
+                        paymentCompletedListener.onPaymentCompleted(routeID);
+                    }
                 }
             }
         });
@@ -353,7 +375,7 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         transactionParams.put("car_id", carID);
 
         FirebaseFirestore.getInstance().collection("users")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                .document(user.getUid())
                 .collection("transactions")
                 .add(transactionParams).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
             @Override
@@ -381,24 +403,29 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
         if (isChecked) {
 
             FirebaseFirestore.getInstance().collection("users")
-                    .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
+                    .document(user.getUid())
                     .get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
                 @Override
                 public void onComplete(@NonNull com.google.android.gms.tasks.Task<DocumentSnapshot> task) {
 
                     if (task.isSuccessful()) {
-                        Object obj = task.getResult().get("points");
-                        if(obj == null) {
-                            Toast.makeText(getContext(), "You have no points", Toast.LENGTH_LONG).show();
-                            return;
+
+                        DocumentSnapshot docSnap = task.getResult();
+
+                        if(docSnap != null) {
+                            Object obj = docSnap.get("points");
+                            if (obj == null) {
+                                Toast.makeText(getContext(), "You have no points", Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                            currentTravelPoints = (long) obj;
+
+                            double moneyOff = (double) (currentTravelPoints / 20);
+                            travelPointsUsed = (int) currentTravelPoints;
+
+                            discountedCost = Math.round(Double.parseDouble(amount) - moneyOff);
+                            callback.onTaskComplete(discountedCost);
                         }
-                        currentTravelPoints = (long) obj;
-
-                        double moneyOff = (double) (currentTravelPoints / 20);
-                        travelPointsUsed = (int) currentTravelPoints;
-
-                        discountedCost = Math.round(Double.parseDouble(amount) - moneyOff);
-                        callback.onTaskComplete(discountedCost);
                     }
                 }
             });
@@ -437,10 +464,20 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
                         @Override
                         public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                             if(task.isSuccessful()) {
-                                int status = Integer.parseInt(task.getResult().get("status").toString());
 
-                                if(status != 2) {
-                                    Toast.makeText(getContext(), "Car ride not confirmed", Toast.LENGTH_LONG).show();
+                                DocumentSnapshot docSnap = task.getResult();
+
+                                if (docSnap != null) {
+
+                                    Object result = docSnap.get("status");
+
+                                    if(result != null) {
+                                        int status = Integer.parseInt(result.toString());
+
+                                        if (status != 2) {
+                                            Toast.makeText(getContext(), "Car ride not confirmed", Toast.LENGTH_LONG).show();
+                                        }
+                                    }
                                 }
                             }
                         }

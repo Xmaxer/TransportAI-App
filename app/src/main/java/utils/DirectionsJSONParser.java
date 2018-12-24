@@ -16,7 +16,7 @@ public class DirectionsJSONParser {
 
     private JSONObject jObject;
 
-    public DirectionsJSONParser(JSONObject jObject) {
+    DirectionsJSONParser(JSONObject jObject) {
         this.jObject = jObject;
         Log.d("JSON File", jObject.toString());
     }

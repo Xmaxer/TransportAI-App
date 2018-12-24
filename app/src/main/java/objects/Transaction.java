@@ -1,7 +1,5 @@
 package objects;
 
-import java.util.Date;
-
 public class Transaction {
 
     private String paymentMethod;
@@ -20,10 +18,6 @@ public class Transaction {
         return paymentMethod;
     }
 
-    public void setPaymentMethod(String paymentMethod) {
-        this.paymentMethod = paymentMethod;
-    }
-
     public double getCost() {
         return cost;
     }
@@ -34,10 +28,6 @@ public class Transaction {
 
     public int getPointsUsed() {
         return pointsUsed;
-    }
-
-    public void setPointsUsed(int pointsUsed) {
-        this.pointsUsed = pointsUsed;
     }
 
     public String getDate() {

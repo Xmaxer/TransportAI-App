@@ -12,12 +12,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import adapters.CarSelectionListAdapter;
 import adapters.MyTransactionsAdapter;
 
 public class MyTransactionsFragment extends Fragment {
-
-    private RecyclerView rvMyTransactions;
 
     @Nullable
     @Override
@@ -29,7 +26,7 @@ public class MyTransactionsFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvMyTransactions = view.findViewById(R.id.rvMyTransactions);
+        RecyclerView rvMyTransactions = view.findViewById(R.id.rvMyTransactions);
 
         LinearLayoutManager linearLayout = new LinearLayoutManager(getContext());
 

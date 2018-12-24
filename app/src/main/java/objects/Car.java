@@ -13,20 +13,8 @@ public class Car {
         this.carImgURL = carImgURL;
     }
 
-    public String getMake() {
-        return make;
-    }
-
-    public String getCarModel() {
-        return model;
-    }
-
     public String getCarID() {
         return carID;
-    }
-
-    public int getStatus() {
-        return status;
     }
 
     public String getImgURL() {
