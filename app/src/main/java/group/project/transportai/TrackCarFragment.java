@@ -78,18 +78,20 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
     private static class GetCarLocation extends AsyncTask<Void, GeoPoint, Void> {
 
         DocumentReference doc;
+        int carStatus = -1;
+        MapUtils mapUtils;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            MapUtils mapUtils = new MapUtils(map);
+            mapUtils = new MapUtils(map);
             mapUtils.drawRoute(origin, dest);
         }
 
         @Override
         protected Void doInBackground(Void... voids) {
 
-            while(true) {
+            while(carStatus != 4) {
 
                 doc = FirebaseFirestore.getInstance().collection("cars").document(carID);
 
@@ -100,6 +102,8 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
                                     GeoPoint location = (GeoPoint) task.getResult().get("location");
 
                                     publishProgress(location);
+
+                                    carStatus = (int) task.getResult().get("status");
                                 }
                             }
                         });
@@ -112,6 +116,7 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
 
             }
 
+            return null;
         }
 
         @Override
@@ -127,6 +132,17 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
 
             carMarker = map.addMarker(new MarkerOptions().position(latLng).title("Car Location"));
             map.moveCamera(CameraUpdateFactory.newLatLng(latLng));
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+
+            FirebaseFirestore.getInstance().collection("cars").document(carID)
+                    .update("status", 0);
+
+            mapUtils.removeMarkerAndLine();
+
         }
     }
 }
