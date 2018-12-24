@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
@@ -65,12 +66,16 @@ public class BookingActivity extends AppCompatActivity
 
         FirebaseMessaging.getInstance().setAutoInitEnabled(true);
 
-        Map<String, Object> emailParams = new HashMap<>();
-        emailParams.put("email", FirebaseAuth.getInstance().getCurrentUser().getProviderData().get(1).getEmail());
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-        FirebaseFirestore.getInstance().collection("users")
-                .document(FirebaseAuth.getInstance().getCurrentUser().getUid())
-                .set(emailParams, SetOptions.merge());
+        if(user != null) {
+            Map<String, Object> emailParams = new HashMap<>();
+            emailParams.put("email", user.getProviderData().get(1).getEmail());
+
+            FirebaseFirestore.getInstance().collection("users")
+                    .document(user.getUid())
+                    .set(emailParams, SetOptions.merge());
+        }
 
         bNext = findViewById(R.id.bNext);
         bNext.setOnClickListener(this);
