@@ -2,6 +2,7 @@ package group.project.transportai;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.DefaultItemAnimator;
@@ -17,8 +18,6 @@ import interfaces.CarSelectedListener;
 
 public class CarSelectionFragment extends Fragment {
 
-    private RecyclerView rvCarSelectList;
-
     private CarSelectedListener carSelectedListener;
 
     @Override
@@ -30,15 +29,15 @@ public class CarSelectionFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_car_selection, container, false);
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        rvCarSelectList = view.findViewById(R.id.rvCarSelectionList);
+        RecyclerView rvCarSelectList = view.findViewById(R.id.rvCarSelectionList);
 
         LinearLayoutManager linearLayout = new LinearLayoutManager(getContext());
 
