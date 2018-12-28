@@ -54,10 +54,11 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
                             String make = document.getString("make");
                             String model = document.getString("model");
                             String regNo = document.getId();
-                            int status = Integer.parseInt(document.getString("status"));
+                            int status = Integer.parseInt(document.get("status").toString());
                             String imgURL = "http://ardra.s3.amazonaws.com/public/cars/" + document.getString("image");
+                            int seats = Integer.parseInt(document.get("seats").toString());
 
-                            Car car = new Car(make, model, regNo, status, imgURL);
+                            Car car = new Car(make, model, regNo, status, imgURL, seats);
                             carList.add(car);
                         }
 
@@ -72,9 +73,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
     @NonNull
     @Override
     public CarSelectionListAdapter.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-
         View itemView = LayoutInflater.from(parent.getContext()).inflate(R.layout.car_selection_list_item_layout, parent, false);
-
         return new CarSelectionListAdapter.ViewHolder(itemView);
     }
 
@@ -83,6 +82,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
         Car car = carList.get(position);
         holder.carModel.setText(car.toString());
         holder.carRegNo.setText(car.getCarID());
+        holder.carNumSeats.setText(String.format("Seats: %s", car.getSeats()));
 
         GlideApp.with(context).load(car.getImgURL()).override(96, 96)
                 .placeholder(R.mipmap.default_car)
@@ -98,7 +98,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
 
     class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView carModel, carRegNo;
+        TextView carModel, carRegNo, carNumSeats;
         RadioButton selected;
         ImageView carImage;
 
@@ -117,6 +117,7 @@ public class CarSelectionListAdapter extends RecyclerView.Adapter<CarSelectionLi
             selected = itemView.findViewById(R.id.rbCarSelectButton);
             carModel = itemView.findViewById(R.id.tvCarModel);
             carRegNo = itemView.findViewById(R.id.tvCarRegNo);
+            carNumSeats = itemView.findViewById(R.id.tvNumSeats);
             carImage = itemView.findViewById(R.id.ivCarImage);
 
             selected.setOnClickListener(l);

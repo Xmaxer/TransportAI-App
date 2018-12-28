@@ -17,20 +17,29 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toEndOf="@id/ivCarImage"
-        android:layout_centerVertical="true"
+        android:paddingTop="12dp"
         android:textColor="#ffffff"
-        android:padding="12dp"
         android:textSize="18sp" />
 
     <TextView
         android:id="@+id/tvCarRegNo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="#ffffff"
-        android:layout_toEndOf="@id/ivCarImage"
         android:layout_below="@id/tvCarModel"
-        android:padding="12dp"
+        android:layout_toEndOf="@id/ivCarImage"
+        android:paddingTop="8dp"
+        android:textColor="#ffffff"
         android:textSize="14sp" />
+
+    <TextView
+        android:id="@+id/tvNumSeats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/tvCarRegNo"
+        android:layout_toEndOf="@id/ivCarImage"
+        android:paddingTop="8dp"
+        android:textColor="#FFFFFF"
+        android:textSize="12sp" />
 
     <RadioButton
         android:id="@+id/rbCarSelectButton"

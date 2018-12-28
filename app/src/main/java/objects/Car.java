@@ -3,14 +3,15 @@ package objects;
 public class Car {
 
     private String make, model, carID, carImgURL;
-    private int status;
+    private int status, seats;
 
-    public Car(String make, String model, String carID, int status, String carImgURL) {
+    public Car(String make, String model, String carID, int status, String carImgURL, int seats) {
         this.make = make;
         this.model = model;
         this.status = status;
         this.carID = carID;
         this.carImgURL = carImgURL;
+        this.seats = seats;
     }
 
     public String getCarID() {
@@ -20,6 +21,8 @@ public class Car {
     public String getImgURL() {
         return carImgURL;
     }
+
+    public int getSeats() {return seats;}
 
     @Override
     public String toString(){
