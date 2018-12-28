@@ -41,9 +41,9 @@ public class MyTransactionsAdapter extends RecyclerView.Adapter<MyTransactionsAd
                         if (querySnap != null) {
                             for (QueryDocumentSnapshot doc : querySnap) {
 
-                                double cost = Double.parseDouble(doc.getString("amount"));
+                                double cost = Double.parseDouble(doc.get("amount").toString());
                                 String paymentMethod = doc.getString("payment_method");
-                                int pointsUsed = Integer.parseInt(doc.getString("points_used"));
+                                int pointsUsed = Integer.parseInt(doc.get("points_used").toString());
                                 String date = doc.get("created_at").toString();
 
                                 Transaction transaction = new Transaction(paymentMethod, cost, pointsUsed, date);
