@@ -78,7 +78,7 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
     private static class GetCarLocation extends AsyncTask<Void, GeoPoint, Void> {
 
         DocumentReference doc;
-        int carStatus = -1;
+        long carStatus = -1;
         MapUtils mapUtils;
 
         @Override
@@ -105,7 +105,7 @@ public class TrackCarFragment extends Fragment implements OnMapReadyCallback {
                                     if(docSnap != null) {
                                         GeoPoint location = (GeoPoint) docSnap.get("location");
                                         publishProgress(location);
-                                        carStatus = (int) task.getResult().get("status");
+                                        carStatus = (long) docSnap.get("status");
                                     }
                                 }
                             }
