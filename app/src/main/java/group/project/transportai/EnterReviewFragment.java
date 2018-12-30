@@ -97,6 +97,8 @@ public class EnterReviewFragment extends Fragment implements View.OnClickListene
                                     Toast.makeText(getContext(), R.string.error_posting_review, Toast.LENGTH_LONG).show();
                                 } else {
                                     Toast.makeText(getContext(), "Review Posted", Toast.LENGTH_LONG).show();
+                                    reviewComment.setText("");
+                                    rating.setRating(0.0f);
                                     bookingCompleteListener.onBookingComplete();
                                 }
                             }
