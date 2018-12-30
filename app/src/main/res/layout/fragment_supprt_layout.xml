@@ -18,7 +18,7 @@
         android:id="@+id/etSupportBody"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:hint="@string/enter_title"
+        android:hint="@string/enter_message"
         android:inputType="textCapSentences|textAutoCorrect"
         android:textColor="#FFFFFF"
         android:textColorHint="#FFFFFF"
