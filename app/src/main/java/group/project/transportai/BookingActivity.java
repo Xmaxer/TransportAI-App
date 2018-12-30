@@ -39,7 +39,7 @@ public class BookingActivity extends AppCompatActivity
     private DrawerLayout drawer;
 
     private Fragment locationFragment, myReviewsFragment, travelPointsFragment,
-            carSelectionFragment, trackCarFragment, enterReviewFragment, myTransactionFragment;
+            carSelectionFragment, trackCarFragment, enterReviewFragment, myTransactionFragment, supportFragment;
     private FragmentManager fragmentManager;
 
     private Button bPrevious, bNext;
@@ -106,6 +106,7 @@ public class BookingActivity extends AppCompatActivity
         trackCarFragment = new TrackCarFragment();
         enterReviewFragment = new EnterReviewFragment();
         myTransactionFragment = new MyTransactionsFragment();
+        supportFragment = new SupportFragment();
 
         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
         setTitle(R.string.route);
@@ -204,6 +205,14 @@ public class BookingActivity extends AppCompatActivity
                 bNext.setVisibility(View.GONE);
 
                 setTitle(R.string.my_transactions);
+                break;
+            case R.id.nav_Support:
+                fragment = supportFragment;
+
+                bPrevious.setVisibility(View.GONE);
+                bNext.setVisibility(View.GONE);
+
+                setTitle(R.string.support);
                 break;
         }
 
