@@ -20,5 +20,8 @@
         <item
             android:id="@+id/nav_myTransactions"
             android:title="@string/my_transactions" />
+        <item
+            android:id="@+id/nav_Support"
+            android:title="@string/support" />
     </group>
 </menu>
