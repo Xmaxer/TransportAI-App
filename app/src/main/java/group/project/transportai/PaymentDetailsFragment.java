@@ -476,6 +476,8 @@ public class PaymentDetailsFragment extends Fragment implements View.OnClickList
 
                                         if (status != 2) {
                                             Toast.makeText(getContext(), "Car ride not confirmed", Toast.LENGTH_LONG).show();
+                                        } else {
+                                            Toast.makeText(getContext(), "Car ride confirmed", Toast.LENGTH_LONG).show();
                                         }
                                     }
                                 }
