@@ -64,4 +64,7 @@
     <string name="error_posting_review">Error Posting Review</string>
     <string name="error_calculating_price">Error calculating price</string>
     <string name="my_transactions">My transactions</string>
+    <string name="enter_title">Enter Title</string>
+    <string name="support">Support</string>
+    <string name="send">Send Support Request</string>
 </resources>
