@@ -293,6 +293,7 @@ public class BookingActivity extends AppCompatActivity
 
                         bPrevious.setVisibility(View.GONE);
                         bNext.setVisibility(View.GONE);
+                        setTitle("Enter Review");
                     } else {
                         Toast.makeText(this, R.string.pleasePay, Toast.LENGTH_SHORT).show();
                     }
