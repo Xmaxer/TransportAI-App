@@ -290,6 +290,9 @@ public class BookingActivity extends AppCompatActivity
                     if(paymentMade) {
                         bookingStage = REVIEW_STAGE;
                         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, enterReviewFragment).commit();
+
+                        bPrevious.setVisibility(View.GONE);
+                        bNext.setVisibility(View.GONE);
                     } else {
                         Toast.makeText(this, R.string.pleasePay, Toast.LENGTH_SHORT).show();
                     }
@@ -303,6 +306,9 @@ public class BookingActivity extends AppCompatActivity
         fragmentManager.beginTransaction().replace(R.id.flBookingScreenArea, locationFragment).commit();
         bookingStage = MAP_STAGE;
         setTitle(R.string.route);
+
+        bPrevious.setVisibility(View.VISIBLE);
+        bNext.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -340,6 +346,8 @@ public class BookingActivity extends AppCompatActivity
     @Override
     public void onPaymentCompleted(String routeID) {
         paymentMade = true;
+
+        bPrevious.setVisibility(View.INVISIBLE);
 
         Bundle args = new Bundle();
         args.putString("routeID", routeID);
